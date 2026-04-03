@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw-Finance | Live Demo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav-controls">
+        <div class="slide-counter">
+            <span id="currentSlide">1</span> / <span id="totalSlides">8</span>
+        </div>
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prevBtn" onclick="prevSlide()">◀ Prev</button>
+            <button class="nav-btn primary" id="nextBtn" onclick="nextSlide()">Next ▶</button>
+        </div>
+    </nav>
+
+    <!-- Slide 1: Hero -->
+    <section class="slide active" id="slide1">
+        <div class="hero-content">
+            <div class="logo-container">
+                <div class="claw-icon">
+                    <svg viewBox="0 0 100 100" class="claw-svg">
+                        <path d="M50 10 L65 35 L90 40 L70 60 L75 85 L50 72 L25 85 L30 60 L10 40 L35 35 Z" 
+                              fill="url(#goldGradient)" class="claw-star"/>
+                        <defs>
+                            <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#E67E22"/>
+                                <stop offset="100%" style="stop-color:#F39C12"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <h1 class="hero-title">OpenClaw-Finance</h1>
+                <p class="hero-subtitle">Your AI-Powered Financial Analyst</p>
+                <p class="hero-tagline">Multi-Market • Multi-Channel • Always On</p>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number" data-target="14">0</span>+
+                    <span class="stat-label">LLM Providers</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="9">0</span>
+                    <span class="stat-label">Chat Channels</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="20">0</span>
+                    <span class="stat-label">Tool Iterations</span>
+                </div>
+            </div>
+            <div class="start-hint">
+                <span class="pulse-text">Press Next to begin the demo</span>
+                <span class="arrow-bounce">→</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 2: Architecture Overview -->
+    <section class="slide" id="slide2">
+        <div class="slide-header">
+            <h2>System Architecture</h2>
+            <p>How OpenClaw-Finance processes your financial queries</p>
+        </div>
+        <div class="architecture-flow">
+            <div class="arch-box chat-apps" data-step="1">
+                <h3>📱 Chat Apps</h3>
+                <div class="channel-grid">
+                    <div class="channel-icon telegram"><span>TG</span></div>
+                    <div class="channel-icon discord"><span>DC</span></div>
+                    <div class="channel-icon slack"><span>SL</span></div>
+                    <div class="channel-icon email"><span>@</span></div>
+                    <div class="channel-icon whatsapp"><span>WA</span></div>
+                    <div class="channel-icon cli"><span>$</span></div>
+                </div>
+                <p class="arch-desc">9 channels, one interface</p>
+            </div>
+            
+            <div class="flow-arrow" data-step="1">
+                <div class="arrow-line"></div>
+                <div class="arrow-head">▶</div>
+                <span class="arrow-label">Messages</span>
+            </div>
+
+            <div class="arch-box message-bus" data-step="2">
+                <h3>🔄 Message Bus</h3>
+                <div class="queue-visual">
+                    <div class="queue-item waiting">msg_001</div>
+                    <div class="queue-item processing">msg_002</div>
+                    <div class="queue-item waiting">msg_003</div>
+                </div>
+                <p class="arch-desc">Async event queue</p>
+            </div>
+
+            <div class="flow-arrow" data-step="2">
+                <div class="arrow-line"></div>
+                <div class="arrow-head">▶</div>
+                <span class="arrow-label">Dispatch</span>
+            </div>
+
+            <div class="arch-box agent-loop" data-step="3">
+                <h3>🧠 Agent Loop</h3>
+                <div class="agent-components">
+                    <div class="agent-part llm">
+                        <span class="part-icon">LLM</span>
+                        <span class="part-label">Reasoning</span>
+                    </div>
+                    <div class="agent-part tools">
+                        <span class="part-icon">🔧</span>
+                        <span class="part-label">Tool Router</span>
+                    </div>
+                    <div class="agent-part eval">
+                        <span class="part-icon">✓</span>
+                        <span class="part-label">Evaluation</span>
+                    </div>
+                </div>
+                <p class="arch-desc">Up to 20 iterations</p>
+            </div>
+
+            <div class="flow-arrow" data-step="3">
+                <div class="arrow-line"></div>
+                <div class="arrow-head">▶</div>
+                <span class="arrow-label">Response</span>
+            </div>
+
+            <div class="arch-box profiling" data-step="4">
+                <h3>👤 Profiling</h3>
+                <div class="profile-items">
+                    <span class="profile-tag">Memory</span>
+                    <span class="profile-tag">History</span>
+                    <span class="profile-tag">Profile</span>
+                </div>
+                <p class="arch-desc">Personalized context</p>
+            </div>
+
+            <div class="flow-arrow" data-step="4">
+                <div class="arrow-line"></div>
+                <div class="arrow-head">▶</div>
+                <span class="arrow-label">Final</span>
+            </div>
+
+            <div class="arch-box final-response" data-step="5">
+                <h3>✅ Response</h3>
+                <div class="response-preview">
+                    <div class="response-text">Analysis complete...</div>
+                </div>
+                <p class="arch-desc">Delivered to user</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 3: Data Sources -->
+    <section class="slide" id="slide3">
+        <div class="slide-header">
+            <h2>Live Market Data</h2>
+            <p>Real-time data ingestion from multiple sources</p>
+        </div>
+        <div class="data-sources-grid">
+            <div class="data-source-card" id="yfinance-card">
+                <div class="source-icon equities">📈</div>
+                <h3>US/Global Equities</h3>
+                <p class="source-provider">Yahoo Finance</p>
+                <div class="live-data" id="equityData">
+                    <div class="ticker-row">
+                        <span class="ticker-symbol">AAPL</span>
+                        <span class="ticker-price">$178.42</span>
+                        <span class="ticker-change positive">+2.34%</span>
+                    </div>
+                    <div class="ticker-row">
+                        <span class="ticker-symbol">MSFT</span>
+                        <span class="ticker-price">$415.67</span>
+                        <span class="ticker-change positive">+1.12%</span>
+                    </div>
+                    <div class="ticker-row">
+                        <span class="ticker-symbol">GOOGL</span>
+                        <span class="ticker-price">$142.89</span>
+                        <span class="ticker-change negative">-0.45%</span>
+                    </div>
+                </div>
+                <div class="source-status active">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Live • Updated 2s ago</span>
+                </div>
+            </div>
+
+            <div class="data-source-card" id="akshare-card">
+                <div class="source-icon china">🇨🇳</div>
+                <h3>Chinese A-Shares</h3>
+                <p class="source-provider">AKShare</p>
+                <div class="live-data">
+                    <div class="ticker-row">
+                        <span class="ticker-symbol">贵州茅台</span>
+                        <span class="ticker-price">¥1,685</span>
+                        <span class="ticker-change positive">+1.87%</span>
+                    </div>
+                    <div class="ticker-row">
+                        <span class="ticker-symbol">宁德时代</span>
+                        <span class="ticker-price">¥198.50</span>
+                        <span class="ticker-change negative">-0.92%</span>
+                    </div>
+                </div>
+                <div class="source-status active">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Live • Updated 5s ago</span>
+                </div>
+            </div>
+
+            <div class="data-source-card" id="fred-card">
+                <div class="source-icon macro">📊</div>
+                <h3>Macro Indicators</h3>
+                <p class="source-provider">FRED</p>
+                <div class="live-data">
+                    <div class="indicator-row">
+                        <span class="indicator-name">GDP Growth</span>
+                        <span class="indicator-value">2.8%</span>
+                    </div>
+                    <div class="indicator-row">
+                        <span class="indicator-name">CPI YoY</span>
+                        <span class="indicator-value">3.2%</span>
+                    </div>
+                    <div class="indicator-row">
+                        <span class="indicator-name">Unemployment</span>
+                        <span class="indicator-value">3.7%</span>
+                    </div>
+                </div>
+                <div class="source-status active">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Live • Updated 1m ago</span>
+                </div>
+            </div>
+
+            <div class="data-source-card" id="crypto-card">
+                <div class="source-icon crypto">₿</div>
+                <h3>Crypto / DEX</h3>
+                <p class="source-provider">DexScreener + CoinGecko</p>
+                <div class="live-data" id="cryptoData">
+                    <div class="ticker-row">
+                        <span class="ticker-symbol">BTC</span>
+                        <span class="ticker-price">$67,432</span>
+                        <span class="ticker-change positive">+3.21%</span>
+                    </div>
+                    <div class="ticker-row">
+                        <span class="ticker-symbol">ETH</span>
+                        <span class="ticker-price">$3,456</span>
+                        <span class="ticker-change positive">+2.89%</span>
+                    </div>
+                    <div class="ticker-row">
+                        <span class="ticker-symbol">SOL</span>
+                        <span class="ticker-price">$178.50</span>
+                        <span class="ticker-change positive">+5.67%</span>
+                    </div>
+                </div>
+                <div class="source-status active">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Live • Updated 1s ago</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 4: Agent Loop Demo -->
+    <section class="slide" id="slide4">
+        <div class="slide-header">
+            <h2>Agentic Tool Loop</h2>
+            <p>Watch the AI reason through a financial query</p>
+        </div>
+        <div class="agent-demo-container">
+            <div class="query-input-area">
+                <div class="user-query">
+                    <span class="user-avatar">👤</span>
+                    <div class="query-bubble">
+                        <span class="query-text">"Analyze AAPL's latest earnings and compare with MSFT valuation"</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="agent-workspace">
+                <div class="workspace-header">
+                    <span class="iteration-badge">Iteration <span id="iterationNum">0</span>/20</span>
+                    <span class="status-badge" id="agentStatus">Ready</span>
+                </div>
+                
+                <div class="tool-execution-panel">
+                    <h4>🔧 Tool Execution Log</h4>
+                    <div class="execution-log" id="executionLog">
+                        <div class="log-entry waiting">
+                            <span class="log-time">--:--:--</span>
+                            <span class="log-tool">Waiting to start...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="llm-thinking-panel">
+                    <h4>🧠 LLM Reasoning</h4>
+                    <div class="thinking-content" id="thinkingContent">
+                        <div class="thinking-placeholder">Agent will start reasoning when demo plays...</div>
+                    </div>
+                </div>
+
+                <div class="results-panel">
+                    <h4>📊 Results</h4>
+                    <div class="results-content" id="resultsContent">
+                        <div class="result-placeholder">Analysis results will appear here...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-controls">
+                <button class="demo-btn primary" id="playDemoBtn" onclick="playAgentDemo()">
+                    ▶ Play Demo
+                </button>
+                <button class="demo-btn" onclick="resetAgentDemo()">
+                    ↺ Reset
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 5: Channel Delivery -->
+    <section class="slide" id="slide5">
+        <div class="slide-header">
+            <h2>Multi-Channel Delivery</h2>
+            <p>Analysis delivered wherever you are</p>
+        </div>
+        <div class="channels-demo">
+            <div class="channel-device" id="telegram-device">
+                <div class="device-frame phone">
+                    <div class="device-header">
+                        <span class="app-name">Telegram</span>
+                        <span class="app-status online">● Online</span>
+                    </div>
+                    <div class="device-screen">
+                        <div class="chat-message incoming">
+                            <span class="msg-sender">You</span>
+                            <span class="msg-text">What's AAPL's P/E ratio?</span>
+                        </div>
+                        <div class="chat-message outgoing">
+                            <span class="msg-sender">OpenClaw</span>
+                            <div class="msg-text analysis">
+                                <div class="typing-indicator" id="tg-typing">
+                                    <span></span><span></span><span></span>
+                                </div>
+                                <div class="analysis-content hidden" id="tg-response">
+                                    📊 AAPL P/E Ratio: 28.5<br>
+                                    📈 vs Sector Avg: 24.2 (+17.8%)<br>
+                                    💡 Interpretation: Premium valuation justified by strong services growth
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="channel-device" id="discord-device">
+                <div class="device-frame desktop">
+                    <div class="device-header discord-header">
+                        <span class="app-name"># finance-analysis</span>
+                    </div>
+                    <div class="device-screen">
+                        <div class="discord-message">
+                            <span class="discord-avatar">🤖</span>
+                            <div class="discord-content">
+                                <span class="discord-author">OpenClaw-Finance</span>
+                                <span class="discord-timestamp">Today at 10:32 AM</span>
+                                <div class="discord-embed">
+                                    <div class="embed-title">📈 AAPL Analysis Report</div>
+                                    <div class="embed-fields">
+                                        <div class="embed-field">
+                                            <span class="field-name">Current Price</span>
+                                            <span class="field-value">$178.42</span>
+                                        </div>
+                                        <div class="embed-field">
+                                            <span class="field-name">52W High</span>
+                                            <span class="field-value">$199.62</span>
+                                        </div>
+                                        <div class="embed-field">
+                                            <span class="field-name">P/E Ratio</span>
+                                            <span class="field-value">28.5</span>
+                                        </div>
+                                        <div class="embed-field">
+                                            <span class="field-name">Recommendation</span>
+                                            <span class="field-value hold">HOLD</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="channel-device" id="cli-device">
+                <div class="device-frame terminal">
+                    <div class="device-header">
+                        <span class="terminal-dots">
+                            <i></i><i></i><i></i>
+                        </span>
+                        <span class="app-name">Terminal — openclaw-finance</span>
+                    </div>
+                    <div class="device-screen terminal-screen">
+                        <div class="terminal-line prompt">
+                            <span class="prompt-symbol">$</span>
+                            <span class="command">openclaw-finance agent -m "AAPL analysis"</span>
+                        </div>
+                        <div class="terminal-output" id="terminal-output">
+                            <div class="output-line">🔍 Fetching AAPL data from Yahoo Finance...</div>
+                            <div class="output-line">📊 Calculating financial metrics...</div>
+                            <div class="output-line">🧠 LLM analyzing fundamentals...</div>
+                            <div class="output-line result">
+                                ┌─────────────────────────────────────┐<br>
+                                │ AAPL Analysis Summary               │<br>
+                                ├─────────────────────────────────────┤<br>
+                                │ Price: $178.42 | P/E: 28.5          │<br>
+                                │ Revenue Growth: +8.2% YoY           │<br>
+                                │ Services: $21.2B (+11.5%)           │<br>
+                                │ Rating: HOLD | Target: $195         │<br>
+                                └─────────────────────────────────────┘
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 6: Security & Governance -->
+    <section class="slide" id="slide6">
+        <div class="slide-header">
+            <h2>🛡️ Security & Governance</h2>
+            <p>ArmorIQ + ClawShield protect your agents from going rogue</p>
+        </div>
+        <div class="security-container">
+            <div class="security-product armoriq">
+                <div class="product-header">
+                    <div class="product-logo">
+                        <span class="logo-icon">🛡️</span>
+                        <h3>ArmorIQ</h3>
+                    </div>
+                    <span class="product-badge">Intent Enforcement</span>
+                </div>
+                <p class="product-desc">Control fabric harness for autonomous agents. Sits between AI Agents and Governance Domains, intercepting plans and enforcing policy before a single action runs.</p>
+                
+                <div class="product-features">
+                    <div class="feature-item">
+                        <span class="feature-icon">🎯</span>
+                        <div>
+                            <strong>Intent Engine</strong>
+                            <p>Define boundaries, enforce automatically</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">👁️</span>
+                        <div>
+                            <strong>Sentry</strong>
+                            <p>Real-time agent action monitoring</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🚧</span>
+                        <div>
+                            <strong>Gatekeeper</strong>
+                            <p>Control agent access to resources</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📋</span>
+                        <div>
+                            <strong>Auditor</strong>
+                            <p>Automatic SOC2/GDPR/NIST audit logs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="armorclaw-highlight">
+                    <div class="highlight-badge">✨ ArmorClaw</div>
+                    <p>Intent Assurance for OpenClaw agents with cryptographic verification at every step.</p>
+                    <a href="https://armoriq.ai" target="_blank" class="product-link">Explore ArmorClaw →</a>
+                </div>
+            </div>
+
+            <div class="security-flow">
+                <div class="flow-diagram">
+                    <div class="flow-node agent">🤖 Agent</div>
+                    <div class="flow-arrow-sec">→</div>
+                    <div class="flow-node security active">
+                        <span class="pulse-ring"></span>
+                        🛡️ Security
+                    </div>
+                    <div class="flow-arrow-sec">→</div>
+                    <div class="flow-node action">⚡ Action</div>
+                </div>
+                <div class="security-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="blockedCount">0</span>
+                        <span class="stat-label">Blocked</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="allowedCount">0</span>
+                        <span class="stat-label">Allowed</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="auditedCount">0</span>
+                        <span class="stat-label">Audited</span>
+                    </div>
+                </div>
+                <div class="demo-panel-compact">
+                    <button class="demo-btn" onclick="simulateSecurityDemo()">▶ Simulate Actions</button>
+                </div>
+            </div>
+
+            <div class="security-product clawshield">
+                <div class="product-header">
+                    <div class="product-logo">
+                        <span class="logo-icon">🔒</span>
+                        <h3>ClawShield</h3>
+                    </div>
+                    <span class="product-badge">Constitutional Execution</span>
+                </div>
+                <p class="product-desc">Runtime governance system that evaluates proposed actions against compiled policy, gates execution behind cryptographic approval tokens, and produces Ed25519-signed receipts.</p>
+                
+                <div class="product-features">
+                    <div class="feature-item">
+                        <span class="feature-icon">⚖️</span>
+                        <div>
+                            <strong>Model-as-a-Judge</strong>
+                            <p>Second model audits high-risk actions</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📡</span>
+                        <div>
+                            <strong>OHTTP Privacy Routing</strong>
+                            <p>Relay sees who, gateway sees what</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <div>
+                            <strong>Live Trace Dashboard</strong>
+                            <p>Waterfall visualization of CoT → Action</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🔐</span>
+                        <div>
+                            <strong>Cryptographic Receipts</strong>
+                            <p>Ed25519-signed decision proofs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-log-mini" id="actionLog">
+                    <div class="log-entry-action waiting">
+                        <span class="action-type">Waiting for actions...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 7: Red Team Adversarial Testing -->
+    <section class="slide" id="slide7">
+        <div class="slide-header red-team-header">
+            <div class="red-team-badge">🔴 RED TEAM</div>
+            <h2>Adversarial Testing</h2>
+            <p>Simulate real-world attacks to test security posture</p>
+        </div>
+        
+        <div class="red-team-container">
+            <div class="attack-selector">
+                <h4>⚔️ Attack Vectors</h4>
+                <div class="attack-categories" id="attackCategories">
+                    <button class="attack-cat-btn active" data-category="prompt">📝 Prompt Injection</button>
+                    <button class="attack-cat-btn" data-category="tool">🔧 Tool Abuse</button>
+                    <button class="attack-cat-btn" data-category="data">💾 Data Exfil</button>
+                    <button class="attack-cat-btn" data-category="resource">🖥️ Resource Abuse</button>
+                </div>
+                <div class="attack-list" id="attackList"></div>
+            </div>
+
+            <div class="defense-visual">
+                <h4>🛡️ Defense Layers</h4>
+                <div class="defense-layers">
+                    <div class="defense-layer" id="layer1">
+                        <span class="layer-icon">🛡️</span>
+                        <span class="layer-name">Intent Check</span>
+                        <span class="layer-status ready">ready</span>
+                    </div>
+                    <div class="defense-layer" id="layer2">
+                        <span class="layer-icon">⚖️</span>
+                        <span class="layer-name">Judge Audit</span>
+                        <span class="layer-status ready">ready</span>
+                    </div>
+                    <div class="defense-layer" id="layer3">
+                        <span class="layer-icon">🔐</span>
+                        <span class="layer-name">Policy Gate</span>
+                        <span class="layer-status ready">ready</span>
+                    </div>
+                </div>
+                
+                <div class="attack-path-visual" id="attackPath">
+                    <div class="path-node start">Attack</div>
+                    <div class="path-line">
+                        <div class="path-particle" id="pathParticle"></div>
+                    </div>
+                    <div class="path-node end" id="pathEnd">?</div>
+                </div>
+
+                <div class="defense-result" id="defenseResult">
+                    <span class="result-icon">⏳</span>
+                    <span class="result-text">Select an attack to begin</span>
+                </div>
+            </div>
+
+            <div class="attack-monitor">
+                <h4>📋 Attack Monitor</h4>
+                <div class="attack-log" id="redTeamAttackLog">
+                    <div class="log-entry-attack info">
+                        <span class="log-time">--:--:--</span>
+                        <span class="log-msg">Red team standing by...</span>
+                    </div>
+                </div>
+                
+                <div class="attack-stats">
+                    <div class="attack-stat">
+                        <span class="stat-num" id="attacksAttempted">0</span>
+                        <span class="stat-name">Attempted</span>
+                    </div>
+                    <div class="attack-stat blocked">
+                        <span class="stat-num" id="attacksBlocked">0</span>
+                        <span class="stat-name">Blocked</span>
+                    </div>
+                    <div class="attack-stat passed">
+                        <span class="stat-num" id="attacksPassed">0</span>
+                        <span class="stat-name">Passed</span>
+                    </div>
+                </div>
+                
+                <div class="attack-controls">
+                    <button class="demo-btn primary" onclick="runAllAttacks()">🔴 Run All Attacks</button>
+                    <button class="demo-btn" onclick="resetRedTeam()">↺ Reset</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 8: Feature Showcase -->
+    <section class="slide" id="slide8">
+        <div class="slide-header">
+            <h2>Key Features</h2>
+            <p>What makes OpenClaw-Finance powerful</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card" onclick="toggleFeature(this)">
+                <div class="feature-icon">🌐</div>
+                <h3>Multi-Market Coverage</h3>
+                <p>US equities, Chinese A-shares, macro indicators, crypto — all in one query</p>
+                <div class="feature-detail">
+                    <ul>
+                        <li>Yahoo Finance for US/global stocks</li>
+                        <li>AKShare for Chinese markets</li>
+                        <li>FRED for US macro data</li>
+                        <li>DexScreener + CoinGecko for crypto</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature-card" onclick="toggleFeature(this)">
+                <div class="feature-icon">🔄</div>
+                <h3>Agentic Tool Loop</h3>
+                <p>Multi-step reasoning with up to 20 tool iterations per query</p>
+                <div class="feature-detail">
+                    <ul>
+                        <li>Autonomous decision making</li>
+                        <li>Self-correction & retry</li>
+                        <li>Tool selection & chaining</li>
+                        <li>Confidence evaluation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature-card" onclick="toggleFeature(this)">
+                <div class="feature-icon">🧠</div>
+                <h3>Financial Memory</h3>
+                <p>Remembers your preferences, profile, and analysis history</p>
+                <div class="feature-detail">
+                    <ul>
+                        <li>Investment profile tracking</li>
+                        <li>Chat history retention</li>
+                        <li>Analysis comparison over time</li>
+                        <li>Data cache with TTL</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature-card" onclick="toggleFeature(this)">
+                <div class="feature-icon">⏰</div>
+                <h3>Scheduled Reports</h3>
+                <p>Automated daily briefs and market alerts</p>
+                <div class="feature-detail">
+                    <ul>
+                        <li>Cron-based scheduling</li>
+                        <li>Custom report templates</li>
+                        <li>Multi-channel delivery</li>
+                        <li>Threshold-based alerts</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature-card" onclick="toggleFeature(this)">
+                <div class="feature-icon">🚀</div>
+                <h3>Meme Coin Launch</h3>
+                <p>Scan social signals and deploy tokens on pump.fun or four.meme</p>
+                <div class="feature-detail">
+                    <ul>
+                        <li>Twitter/RSS social scanning</li>
+                        <li>LLM meme potential scoring</li>
+                        <li>pump.fun (Solana) deployment</li>
+                        <li>four.meme (BSC) deployment</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature-card" onclick="toggleFeature(this)">
+                <div class="feature-icon">🔌</div>
+                <h3>Extensible Skills</h3>
+                <p>Plugin architecture for custom capabilities</p>
+                <div class="feature-detail">
+                    <ul>
+                        <li>Custom skill definitions</li>
+                        <li>MCP server integration</li>
+                        <li>Shell command execution</li>
+                        <li>Web scraping tools</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature-card" onclick="toggleFeature(this)">
+                <div class="feature-icon">📡</div>
+                <h3>Prediction Markets</h3>
+                <p>Query Polymarket and Kalshi for event probabilities</p>
+                <div class="feature-detail">
+                    <ul>
+                        <li>Trending markets discovery</li>
+                        <li>Probability history charts</li>
+                        <li>Cross-platform comparison</li>
+                        <li>Volume-based signals</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature-card" onclick="toggleFeature(this)">
+                <div class="feature-icon">🔐</div>
+                <h3>Security & Governance</h3>
+                <p>ArmorIQ + ClawShield integration for agent security</p>
+                <div class="feature-detail">
+                    <ul>
+                        <li>Intent verification with ArmorIQ</li>
+                        <li>Constitutional execution via ClawShield</li>
+                        <li>Model-as-a-Judge action auditing</li>
+                        <li>Cryptographic decision receipts</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature-card" onclick="toggleFeature(this)">
+                <div class="feature-icon">🔴</div>
+                <h3>Red Team Testing</h3>
+                <p>Continuous adversarial testing for security validation</p>
+                <div class="feature-detail">
+                    <ul>
+                        <li>Prompt injection testing</li>
+                        <li>Tool abuse scenarios</li>
+                        <li>Data exfiltration attempts</li>
+                        <li>Resource abuse detection</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="get-started">
+            <h3>Ready to get started?</h3>
+            <code class="install-cmd">pip install -e . && openclaw-finance onboard</code>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
