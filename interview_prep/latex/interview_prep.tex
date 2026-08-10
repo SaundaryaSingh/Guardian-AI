@@ -1,0 +1,843 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{multicol}
+
+\definecolor{primaryblue}{RGB}{0,82,136}
+\definecolor{secondaryblue}{RGB}{0,120,180}
+\definecolor{accentgreen}{RGB}{40,167,69}
+\definecolor{lightgray}{RGB}{245,245,245}
+\definecolor{darkgray}{RGB}{50,50,50}
+\definecolor{orange}{RGB}{255,140,0}
+\definecolor{purple}{RGB}{128,0,128}
+\definecolor{teal}{RGB}{0,128,128}
+
+\hypersetup{colorlinks=true,linkcolor=primaryblue,urlcolor=secondaryblue}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{primaryblue}{\textbf{OpenClaw-Finance}}}
+\fancyhead[R]{\textcolor{darkgray}{Interview Prep Guide}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\titleformat{\section}{\Large\bfseries\color{primaryblue}}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries\color{secondaryblue}}{\thesubsection}{1em}{}
+
+\newcommand{\Q}[1]{\subsection{#1}}
+\newcommand{\Ans}[1]{\paragraph{\textbf{Answer:}} #1}
+\newcommand{\Why}{\paragraph{\textcolor{orange}{\textbf{Why They Ask:}}}}
+\newcommand{\Probe}{\paragraph{\textcolor{teal}{\textbf{Follow-up Probes:}}}}
+
+\begin{document}
+
+% TITLE PAGE
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+{\Huge\bfseries\textcolor{primaryblue}{OpenClaw-Finance}}\\[0.5cm]
+{\LARGE\textcolor{secondaryblue}{Interview Preparation Guide}}\\[1cm]
+{\Large\textcolor{darkgray}{Full Stack + AI/ML Intern}}\\[0.3cm]
+{\Large\textcolor{darkgray}{BNY Mellon}}\\[2cm]
+{\large\textcolor{darkgray}{Comprehensive Technical \& Behavioral Interview Prep}}\\[0.5cm]
+{\large\textcolor{darkgray}{August 2026}}\\[2cm]
+\rule{0.5\textwidth}{0.5pt}\\[0.5cm]
+{\small\textcolor{darkgray}{7 Parts $\cdot$ 100+ Questions $\cdot$ Complete Answer Scripts}}
+\vfill
+{\small\textcolor{darkgray}{Guardian-AI Project}}
+\end{titlepage}
+
+% TABLE OF CONTENTS
+\newpage
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{Part 1: Core Architecture Questions}
+% ============================================================
+
+\textcolor{purple}{\textbf{Glossary:}} \textit{Agent Loop (AI reasoning cycle), Message Bus (async queue), Channel (chat platform), Session (conversation history), JSONL (line-delimited JSON), Tool Registry (plugin system), LLM (Large Language Model), Cron (task scheduler)}
+
+\Q{Q1: Walk me through what OpenClaw-Finance is and what it does.}
+\Why They want a 60-second pitch showing end-to-end understanding.
+\Ans OpenClaw-Finance is an AI financial assistant connecting to live market data, reasoning through investment questions, and delivering answers across nine chat channels. It uses an LLM agent loop calling financial tools like stock APIs, macro databases, and crypto trackers. It remembers preferences, caches results, and runs scheduled tasks---a personal financial analyst in your chat app.
+\Probe How many users simultaneously? What differentiates it from ChatGPT? What data sources?
+
+\Q{Q2: What problem were you solving?}
+\Why They want to see you chose a real problem.
+\Ans Most chatbots just talk without pulling live data or remembering context. OpenClaw-Finance bridges that gap with actual market data, step-by-step reasoning, and multi-channel delivery through a shared message bus.
+\Probe Target user? Hardest part with real data?
+
+\Q{Q3: Describe the overall architecture at a high level.}
+\Why System-level thinking is critical.
+\Ans Four layers: (1) \textbf{Channel layer}---Telegram, Discord, etc. push messages to a bus. (2) \textbf{Message bus}---async queues decoupling channels from agent. (3) \textbf{Agent loop}---picks up messages, builds prompts, runs LLM with tool calls. (4) \textbf{Tool registry}---plugin system for APIs. Responses flow back through the bus. Sessions stored as JSONL per user per channel.
+\Probe Why message bus vs direct calls? How does loop stop? Where is the LLM?
+
+\Q{Q4: What is the agent loop and how does it work?}
+\Why This is the core of the project.
+\Ans A while-loop running up to 20 iterations. Each iteration sends conversation to LLM. LLM either returns a final answer or requests a tool call. If tool requested, execute it, feed result back, loop again. After 20 iterations, force a summary response. Enables step-by-step reasoning across multiple data sources.
+\Probe Tool failure handling? Why 20 iterations? Preventing infinite loops?
+
+\Q{Q5: Why iterative tool-loop instead of single LLM call?}
+\Why They want architectural reasoning.
+\Ans Single LLM calls only use pre-existing knowledge. Financial analysis requires live data---prices change every second. Tool loop lets LLM decide what data to fetch, analyze it, and fetch more if needed. Tradeoff: latency and cost per iteration, but significantly better answer quality.
+\Probe Reducing iterations for simple queries? Cost implications?
+
+\Q{Q6: Explain the message bus. Why does it exist?}
+\Why Decoupling is fundamental.
+\Ans Async queue system with inbound/outbound queues. Channels push messages; agent pops from inbound. Agent pushes responses to outbound; dispatcher routes to correct channel. Key benefit: agent doesn't know or care about source channel. Adding new channels requires only a handler---no agent changes. Producer-consumer pattern.
+\Probe Outbound queue backup? Scaling to thousands? Why async over sync?
+
+\Q{Q7: How does session management work?}
+\Why State management is critical for chat apps.
+\Ans Each user/channel gets unique session key (e.g., \texttt{telegram:12345}). History stored as message list. In-memory cache for speed, JSONL files for persistence. When session exceeds 50 messages, LLM summarizes old messages into memory file, keeping 25 recent messages active.
+\Probe Why JSONL vs database? Concurrent writes? Cleanup for inactive users?
+
+\Q{Q8: Why JSONL files for session storage?}
+\Why They want trade-off justification.
+\Ans Deliberate choice for simplicity. Human-readable (can \texttt{cat} to see conversation). Append-friendly matching message arrival. No database dependency for easy setup. Tradeoff: doesn't scale for many concurrent users. Right balance for single-user/small-team tool.
+\Probe Scaling to 10K users? Concurrent write handling?
+
+\Q{Q9: What is memory consolidation and why?}
+\Why LLM context window limits are real.
+\Ans LLMs have fixed context windows. When conversation exceeds 50 messages, LLM summarizes older messages into MEMORY.md capturing key facts (investment preferences, past analyses). Only 25 recent messages stay active. Memory file injected into future prompts for context without every old message.
+\Probe What's lost in summarization? How to decide importance? Embedding-based retrieval?
+
+\Q{Q10: How does the system know what tools to use?}
+\Why Tool routing is key in agentic systems.
+\Ans Two-stage process: (1) Financial intent detection---analyzes message for query type (stock price, crypto, macro, meme coin). (2) LLM makes final tool selection based on routing hints. Pre-filter narrows options; LLM picks exact tools.
+\Probe Intent misclassification? Improving routing accuracy? LLM-only routing?
+
+\Q{Q11: What is the Tool Registry?}
+\Why Plugin architectures are common in production.
+\Ans Central place where tools are registered by name. Agent loop registers stock fetchers, web search, file ops, shell execution. LLM sees callable functions with descriptions/parameters. Returns tool calls; registry looks up and executes. New tools added without changing agent loop---plugin architecture.
+\Probe Tool errors/timeouts? String-based vs typed registration? MCP support?
+
+\Q{Q12: Why LLM as router instead of hard-coded logic?}
+\Why Flexibility vs determinism trade-off.
+\Ans Hard-coding rules works for obvious cases but financial queries are messy. ``How does Apple's revenue compare to global GDP?'' requires both stock and macro data. LLM reasons about novel queries without code changes. Tradeoff: extra LLM call cost/latency, but flexibility worth it for diverse queries.
+\Probe Fast path for common queries? Wrong tool routing? Testing LLM routing?
+
+\Q{Q13: Walk through ``What's Tesla's P/E ratio?'' on Telegram.}
+\Why End-to-end traceability shows deep understanding.
+\Ans Telegram handler $\rightarrow$ InboundMessage to bus $\rightarrow$ Intent detection (classifies as stock metrics) $\rightarrow$ ContextBuilder assembles prompt $\rightarrow$ LLM calls stock tool with TSLA/PE $\rightarrow$ Yahoo Finance returns data $\rightarrow$ LLM formats response $\rightarrow$ Outbound queue $\rightarrow$ Telegram sends to user.
+\Probe End-to-end latency? Yahoo Finance down? Caching for repeated queries?
+
+\Q{Q14: How does the system handle multiple channels simultaneously?}
+\Why Concurrency is a real challenge.
+\Ans Each channel runs async handler (Telegram polling, Discord WebSocket, Slack Socket Mode). All push to same inbound queue. Agent processes sequentially by default, but async queue prevents blocking. Outbound dispatcher routes responses to correct channel via subscriber callbacks.
+\Probe 30-second query bottleneck? Parallel processing? Discord token expiry?
+
+\Q{Q15: What design patterns did you use?}
+\Why Pattern recognition shows maturity.
+\Ans (1) \textbf{Producer-Consumer} for message bus. (2) \textbf{Plugin architecture} for tool registry. (3) \textbf{Observer} for outbound dispatch. (4) \textbf{Middleware} for financial intent detection. (5) \textbf{ReAct/Agentic Loop}---reason, act, observe, repeat. Each solves specific problem: decoupling, extensibility, routing, or iterative reasoning.
+\Probe Hardest pattern? Refactoring pre-processing to middleware? Production patterns?
+
+\Q{Q16: How do you handle errors in the agent loop?}
+\Why Production readiness matters.
+\Ans Basic error handling: failed tool calls feed error to LLM for retry or user report. Max 20 iterations prevents infinite loops. Areas to improve: retry logic with exponential backoff for transient failures, max-errors threshold for graceful giving up.
+\Probe LLM API down? Single bad user? Circuit breaker patterns?
+
+\Q{Q17: Biggest limitations of current architecture?}
+\Why Self-awareness shows maturity.
+\Ans (1) \textbf{Scaling}---JSONL files don't handle concurrent users. (2) \textbf{Latency}---no streaming responses. (3) \textbf{Coupling}---financial logic embedded in agent loop. Also: no gateway authentication, no graceful cron shutdown, error messages leak details.
+\Probe Fix first? 100x users architecture? Start over?
+
+\Q{Q18: How would you improve for BNY Mellon production?}
+\Why Bridge personal project to enterprise.
+\Ans (1) \textbf{Security}---API auth, allowlists, no stack traces. (2) \textbf{Scalability}---PostgreSQL, connection pooling, concurrent agent. (3) \textbf{Observability}---structured logging, metrics, tracing. (4) \textbf{Compliance}---audit trails with timestamps. (5) \textbf{Streaming}---don't make users wait.
+\Probe Audit logging for compliance? First deployment? Secrets management?
+
+\Q{Q19: Why Python instead of Java/Node.js?}
+\Why Technology choice matters (BNY uses Java).
+\Ans (1) AI/ML ecosystem centered on Python---LLM libs, financial data libs, LiteLLM. (2) \texttt{asyncio} provides concurrency without multi-threading complexity. (3) Rapid prototyping for AI agent logic. For BNY production: Java with Spring Boot would suit enterprise requirements.
+\Probe Java version? LLM integration in Java? Python performance implications?
+
+\Q{Q20: How does financial caching work?}
+\Why Caching is critical with expensive APIs.
+\Ans Results saved with metadata (ticker, type, timestamp, summary). Cache checked first on repeat queries; fresh data injected into prompt. TTL-based expiry: prices never cached, P/E ratios cached for hours. Saves API calls, reduces latency, lowers costs.
+\Probe What to cache? Stale data risks? Cache invalidation?
+
+\Q{Q21: What are subagents?}
+\Why Task decomposition and parallelism.
+\Ans Background workers spawned for long-running tasks (e.g., analyzing 10 stocks). Main agent continues while subagent researches. Implemented via \texttt{spawn} tool with isolated context. Tradeoff: complexity around result delivery to correct user.
+\Probe Subagent failures? Result delivery? Cron job pattern?
+
+\Q{Q22: Handling topic switches in conversation?}
+\Why Context management is nuanced.
+\Ans Memory consolidation maintains context. LLM sees recent history and long-term memory. Financial intent detector classifies new query independently. \texttt{/new} command clears session for clean slate.
+\Probe ``Compare that to Bitcoin''---does agent know ``that''? Multi-user context?
+
+\Q{Q23: What would you do differently from scratch?}
+\Why Reflection shows growth mindset.
+\Ans (1) Generic agent loop with pluggable middleware from day one. (2) SQLite/Postgres instead of JSONL. (3) Streaming from start. (4) Proper testing infrastructure earlier.
+\Probe Middleware design? Biggest lesson? 3-month feature plan?
+
+\Q{Q24: How does cron/scheduling work?}
+\Why Background tasks matter in production.
+\Ans Users schedule recurring tasks via CLI. Gateway loads enabled jobs on start. When job fires, creates synthetic message, routes through agent loop, delivers to user's channel. Same reasoning pipeline as regular messages.
+\Probe Restart during cron fire? Timezone handling? Job retry on failure?
+
+\Q{Q25: Why is financial pre-processing important?}
+\Why Optimization in AI systems.
+\Ans Without pre-processing, LLM figures out everything from scratch---wasting tokens and adding latency. Pre-processing detects intent, loads cached data, checks user profile, adds routing hints. LLM starts with context for better, faster tool decisions.
+\Probe Intent detection accuracy? Token savings measurement? Slow pre-processing?
+
+\Q{Q26: How would you test this system?}
+\Why Testing strategy reveals discipline.
+\Ans Three layers: (1) \textbf{Unit tests}---intent detector, session persistence, registry lookups. (2) \textbf{Integration tests}---bus flow with mocked platforms. (3) \textbf{E2E tests}---mock LLM, full pipeline. Test harness with recorded responses for determinism.
+\Probe Testing intent detector? Hardest component? Multi-channel routing tests?
+
+\Q{Q27: What role does ContextBuilder play?}
+\Why Prompt engineering is critical.
+\Ans Assembles full LLM prompt: system prompt, bootstrap files (AGENTS.md, SOUL.md), long-term memory (MEMORY.md), conversation history, financial profile, current message with routing hints. Without it, LLM has no memory, personality, or context.
+\Probe System prompt vs memory? Exceeding token limit? Cost optimization?
+
+\Q{Q28: Handling rapid consecutive messages?}
+\Why Real-world usage patterns matter.
+\Ans Currently sequential processing. Three messages queue and process one at a time. Improvements: detect rapid succession and combine context, debounce window, per-user rate limiting.
+\Probe Message debouncing implementation? UX impact? Rate limiting?
+
+\Q{Q29: What is MCP server connection?}
+\Why Interoperability standards matter.
+\Ans Model Context Protocol---standard for connecting agents to external tool servers. Users can extend agent with new tools without code changes. Similar to tool registry but open standard. Tradeoff: connection management complexity.
+\Probe MCP vs registering tools? Security of unknown servers? Authentication?
+
+\Q{Q30: Present to BNY Mellon technical panel---what to emphasize?}
+\Why Frame work in business context.
+\Ans (1) \textbf{Agentic pattern}---same as enterprise AI for document processing, fraud detection. (2) \textbf{Multi-channel}---message bus serves Slack, chatbots, email simultaneously. (3) \textbf{Financial domain expertise}---intent detection, caching, memory show understanding of time-sensitive, audit-required data.
+\Probe BNY compliance adaptation? Enterprise deployment changes? Cloud-first alignment?
+
+% ============================================================
+\newpage
+\section{Part 2: Tools \& Data Questions}
+% ============================================================
+
+\textcolor{purple}{\textbf{Glossary:}} \textit{API (Application Interface), TTL (Time To Live), OHLCV (Open/High/Low/Close/Volume), Intent Detection, Fuzzy Matching, IPFS (decentralized storage), WACC (Weighted Average Cost of Capital)}
+
+\Q{Q1: Walk through the 10+ data sources. Why each?}
+\Why Tests data landscape understanding and trade-off articulation.
+\Ans (1) Yahoo Finance---US/global stocks, free. (2) AKShare---Chinese A-shares. (3) FRED---US macro (GDP, CPI, Fed rate). (4) DexScreener---DEX tokens. (5) CoinGecko---crypto market caps. (6) Polymarket/Kalshi---prediction markets. (7) Tavily/Brave---web search. (8) Twitter/X---social signals. (9) RSS/RSSHub---multi-platform monitoring. Key insight: no single API covers all domains; pick best per category and normalize outputs.
+\Probe Source down---graceful degradation? Paid providers like Bloomberg? Sync yfinance in async system?
+
+\Q{Q2: Explain intent detection system.}
+\Why Tests NLU, routing patterns, reducing LLM calls.
+\Ans Rule-based using keyword matching. Extracts tickers via regex (\texttt{\$AAPL}, \texttt{600519.SH}), matches keyword sets per intent, calculates confidence score combining ticker count and keyword matches. Highest score wins. Rule-based for speed (microseconds vs seconds), predictability, and cost savings. 90\% accurate; remainder falls to general LLM handler.
+\Probe Confidence formula? Mixed-intent queries? Low-confidence threshold?
+
+\Q{Q3: LLM sub-agent pattern---why not one LLM?}
+\Why Separation of concerns, latency vs quality, cost.
+\Ans Outer LLM handles conversation (general-purpose like Claude). Inner LLM specialized per domain (equity valuation, meme routing). Outer calls router tool, which runs inner LLM with domain-specific tools. Tradeoff: two LLM calls latency, but improved accuracy and token savings (inner prompts exclude conversation history).
+\Probe Inner LLM tool iterations? Inner tool errors? Replace with fine-tuned model?
+
+\Q{Q4: Meme coin pipeline end-to-end.}
+\Why Multi-stage data pipelines, social signal processing.
+\Ans Three stages: \textbf{Scan} (fetch Twitter, Reddit, TikTok, Google News in parallel; deduplicate; LLM assigns viral score 1-10 by category), \textbf{Confirm} (query DexScreener/CoinGecko for market data), \textbf{Deploy} (user confirms; create token on pump.fun/four.meme). Safety: scan is read-only, confirm is informational, deploy requires human confirmation.
+\Probe Cross-platform dedup? High-viral categories? Preventing pump-and-dump?
+
+\Q{Q5: Caching strategy. Why different TTLs?}
+\Why Data freshness, storage trade-offs, cost.
+\Ans Price queries: 0 TTL (real-time). Prediction markets: 5 min. Market search: 1 day. Financial analysis: 7 days. Earnings: 30 days. AKShare spot: 10 min. Disk cache with index file. Principle: cache aggressively for slow-changing data, never for real-time.
+\Probe Expired cache with rate-limited API? Multi-instance scaling? Disk vs Redis?
+
+\Q{Q6: Rate limiting across 10+ APIs.}
+\Why API integration patterns, resilience.
+\Ans Per-module sliding window counters. AKShare: 1/sec. DexScreener: 300/min. CoinGecko: 30/min. Polymarket/Kalshi: 300/min each. Structured errors on limit hit; inner LLM retries or informs user. Caching reduces calls. Graceful degradation: one source limited, others continue.
+\Probe Sliding window code? CoinGecko free vs pro? Retry strategy?
+
+\Q{Q7: Prediction market cross-platform comparison.}
+\Why Heterogeneous API integration.
+\Ans Searches both Polymarket and Kalshi for same query. Fuzzy title matching (threshold 0.55 via difflib SequenceMatcher) pairs same-event markets. Side-by-side odds display. Single-platform markets flagged. Valuable for arbitrage opportunities and sentiment differences.
+\Probe False positives? Different outcome structures (binary vs multi)? Divergence alerts?
+
+\Q{Q8: Rule-based vs LLM classifier for intent?}
+\Why Simple vs complex solutions judgment.
+\Ans Three reasons: (1) Speed---microseconds vs seconds. (2) Predictability---same input, same route. (3) Cost---no extra tokens. Covers 90\% accurately; remaining 10\% falls to general LLM. Production: might train lightweight classifier, but keywords with confidence scoring is right scope.
+\Probe Failing queries? Improving over time? Confidence threshold for fallback?
+
+\Q{Q9: Equity valuation engine---walk through DCF.}
+\Why Financial domain knowledge.
+\Ans Supports 10 models (FCFF, FCFE, Gordon Growth, DDM variants, multiples, residual income). DCF: pull FCF from Yahoo Finance, WACC from risk-free rate + 5.5\% equity premium + beta. Project 5 years, terminal value at 2.5\% growth, discount to present. >15\% above price: BUY; >15\% below: SELL.
+\Probe Terminal growth sensitivity? Tech vs utility assumptions? Negative FCF?
+
+\Q{Q10: Async architecture---why \texttt{asyncio.to\_thread()}?}
+\Why Concurrency, event loops, Python async.
+\Ans yfinance/akshare are synchronous---block thread on HTTP. Web server uses async event loop for concurrency. \texttt{asyncio.to\_thread()} runs sync lib in separate thread while event loop stays free. Simplicity of sync libs with async throughput. Consistent interface across all tools.
+\Probe Thread pool memory? Fully async HTTP clients? All threads busy?
+
+\Q{Q11: Handling financial API errors.}
+\Why Fault tolerance in production.
+\Ans Structured error responses (not exceptions). Rate limits, timeouts, invalid data wrapped in consistent format with error code/message. Inner LLM decides: retry with different params, try alternative source, or explain limitation. System operational when individual sources fail.
+\Probe Error schema? Testing without breaking APIs? Retry limit?
+
+\Q{Q12: Normalizing Yahoo Finance and AKShare data.}
+\Why Data engineering skills.
+\Ans Mapping layer translates AKShare Chinese column headers to English. Both return OHLCV but different timestamp formats/timezones. Normalize to UTC, standardize column names. Symbol resolution for exchange suffixes (SH/SZ).
+\Probe Multi-exchange stocks? Currency conversion? Adding Bloomberg?
+
+\Q{Q13: Meme coin viral scoring system.}
+\Why Social signal quantification.
+\Ans LLM assigns 1-10 score by category: current events (8-10), animal themes (6-9), internet slang (5-8), generic crypto terms (1-3). Platform diversity boosts score (Twitter + Reddit + TikTok > single platform). Below threshold (default 3) filtered out.
+\Probe False positives? Engagement metrics? Detecting manipulation?
+
+\Q{Q14: Token deployment on pump.fun---security measures.}
+\Why Blockchain interactions, security design.
+\Ans Upload image/metadata to IPFS $\rightarrow$ build transaction via PumpPortal API $\rightarrow$ sign with Solana keypair (solders library) $\rightarrow$ broadcast to RPC node. Security: private keys never hardcoded, \texttt{check\_env} verifies credentials, outer LLM confirms details with user before signing. Human-in-the-loop critical (irreversible, costs real SOL).
+\Probe RPC node down? Stuck mempool transaction? Simulation step?
+
+\Q{Q15: Why two APIs for Polymarket (Gamma + CLOB)?}
+\Why API decomposition.
+\Ans Gamma: metadata (events, categories, tags) for discovery. CLOB: trading data (prices, order book, timeseries) for real-time pricing. Best of both; partial functionality if one down. Alternative---web scraping---is fragile and violates ToS.
+\Probe Gamma-to-CLOB ID correlation? Latency differences? API versioning?
+
+\Q{Q16: Improving for 10x concurrent users.}
+\Why Scaling bottlenecks.
+\Ans (1) Cache: disk $\rightarrow$ Redis with same TTL. (2) LLM calls: pre-compute common analyses, smaller fine-tuned model for inner loop. (3) Rate limits: request queue with priority levels, connection pooling, WebSocket subscriptions for live data.
+\Probe Cache sharding? Monitoring bottlenecks? Query prioritization?
+
+\Q{Q17: Rebuilding data architecture from scratch.}
+\Why Self-awareness, technical debt.
+\Ans (1) Formal Pydantic schemas for typed objects. (2) DataSource interface abstraction. (3) Standalone cache service from start. Balances abstraction with pragmatism.
+\Probe Schema versioning? Abstraction layer testing? Balancing with delivery?
+
+% ============================================================
+\newpage
+\section{Part 3: AI/ML Questions}
+% ============================================================
+
+\textcolor{purple}{\textbf{Glossary:}} \textit{Function Calling (LLM tool invocation), Temperature (randomness control), Context Window (visible text limit), Hallucination (confident fabrication), RAG (Retrieval-Augmented Generation), Evals (AI quality tests), Gateway (multi-provider proxy)}
+
+\Q{1. Integrate 14+ LLM providers behind single interface.}
+\Why Abstraction, Strategy Pattern, flexible systems.
+\Ans Abstract base class \texttt{LLMProvider} with \texttt{chat()} and \texttt{get\_default\_model()}. Every provider implements these methods. Agent loop calls \texttt{provider.chat()}, gets standardized response (text, tool calls, tokens, finish reason). Swapping Claude $\leftrightarrow$ GPT-4 requires no agent changes. Universal power adapter pattern.
+\Probe Registry vs config files? Hardest provider? LiteLLM's role?
+
+\Q{2. System decides which provider to use.}
+\Why Routing logic, fallback strategies.
+\Ans Priority order: (1) Model name keyword match (e.g., \texttt{claude-3} $\rightarrow$ Anthropic). (2) Gateway providers checked first (OpenRouter handles any model). (3) First provider with API key set. User doesn't worry about providers---system figures it out.
+\Probe Overlapping keywords? Both OpenAI and OpenRouter keys? Gateway vs standard?
+
+\Q{3. Function calling in LLMs---how agent uses it.}
+\Why Core AI concept.
+\Ans LLM generates structured function call (``call get\_stock\_price with AAPL''). Agent executes, gets real data, feeds back. Model reasons over actual data instead of guessing. Enables live financial data, web search, prediction market checks.
+\Probe Tool definitions? Function call failure? Models without function calling?
+
+\Q{4. Walk through agentic loop.}
+\Why Multi-step reasoning core.
+\Ans Loop up to 20 iterations. System prompt assembled (message, profile, memory). LLM answers directly or requests tool. Tool executed, result fed back. Model decides: enough info or need another tool? Continues until final answer or iteration limit. 20-iteration cap prevents infinite loops.
+\Probe Preventing infinite loops? Endless tool calling? Max iteration rationale?
+
+\Q{5. System prompt design for financial analysis.}
+\Why Prompt engineering skill.
+\Ans Three layers: (1) Personality---communication style. (2) Context---user's investment profile, risk tolerance. (3) Rules---tool usage, response format, when to ask clarification. Few-shot examples show expected output. Specificity is key.
+\Probe Token limits? System vs user prompt difference? Prompt effectiveness testing?
+
+\Q{6. Long conversations without losing context.}
+\Why Memory management challenge.
+\Ans Sliding window: recent messages always included, older ones summarized/dropped. Long-term memory store keeps key facts (portfolio, preferences). Financial data cached with TTL. Balances context retention with cost.
+\Probe ``Lost in the middle'' problem? Keep vs summarize decisions? Short vs long-term memory?
+
+\Q{7. Reduce hallucinations.}
+\Why Major LLM challenge, especially in finance.
+\Ans (1) Ground in real data via function calls. (2) Lower temperature for determinism. (3) System prompt says ``I don't know'' when data unavailable. (4) Tool calls verify claims. Layered approach---no single technique eliminates hallucinations.
+\Probe Temperature setting? Evaluating hallucination reduction? RAG's role?
+
+\Q{8. Chain-of-thought reasoning.}
+\Why Fundamental LLM reasoning technique.
+\Ans Ask model to show reasoning step by step. Critical for financial analysis: pull revenue $\rightarrow$ compare to expectations $\rightarrow$ consider macro $\rightarrow$ form conclusion. Makes reasoning transparent for debugging. DeepSeek-R1 built for this. Built into prompts via ``show your work.''
+\Probe Differs from standard prompting? When NOT to use? Cost tradeoff?
+
+\Q{9. Evaluate AI agent performance.}
+\Why Evals essential for production AI.
+\Ans Test questions with known answers (e.g., Apple Q3 2024 revenue). LLM-as-judge for subjective quality. Track metrics: right tools called, iterations taken, hallucinated numbers. Regular eval runs catch regressions.
+\Probe Ground-truth datasets? Component vs end-to-end evals? Subjective quality evaluation?
+
+\Q{10. Rate limiting and provider failures.}
+\Why Production reliability.
+\Ans Retry with exponential backoff (5s, 10s, 20s, give up after 3). Fallback routing: primary fails $\rightarrow$ next provider. Registry manages available fallbacks. User rarely sees errors---system routes around problems.
+\Probe Exponential backoff mechanics? Other error types? Max retry rationale?
+
+\Q{11. Gateway vs standard provider.}
+\Why Provider architecture.
+\Ans Standard (OpenAI/Anthropic): only own models with own key. Gateway (OpenRouter): any model from any provider with single key. Gateway detected by API key prefix (\texttt{sk-or-}). Gateways checked first in fallback for flexibility.
+\Probe Why not gateway for everything? Tradeoffs? Model prefixing differences?
+
+\Q{12. API key management for 14+ providers.}
+\Why Security best practices.
+\Ans Keys in local config (\texttt{\textasciitilde/.openclaw-finance/config.json}), never committed. Read at runtime, set as env vars for LiteLLM. OAuth flow for Codex. \texttt{setdefault} prevents overwrites. Never logged---verbose mode redacts sensitive fields.
+\Probe Accidental config commit? Different auth mechanisms? Env var side effects?
+
+\Q{13. Prompt engineering techniques used.}
+\Why Practical LLM instruction design.
+\Ans Few-shot (examples of expected format), chain-of-thought (step-by-step), modular chaining (data $\rightarrow$ analysis $\rightarrow$ formatting), clear tool descriptions. Key insight: small wording changes dramatically alter behavior.
+\Probe Testing effectiveness? Zero-shot vs few-shot? Token limit handling?
+
+\Q{14. Multi-model strategy for financial app.}
+\Why Cost, performance, reliability tradeoffs.
+\Ans Different models for different tasks: Claude Opus/GPT-4 for complex reasoning, GPT-4o-mini/DeepSeek for simple lookups, DeepSeek-R1 for step-by-step. Routing logic analyzes task complexity. ``Don't need a Ferrari for groceries.''
+\Probe Measuring cheaper model sufficiency? Model distillation? Degradation over time?
+
+\Q{15. RAG and financial agent.}
+\Why Foundational grounding technique.
+\Ans RAG: retrieve relevant info, then generate. My agent uses tool calls similarly---fetch live data, then reason. Spirit is the same (grounding in real data), technically tool use vs vector-based RAG. Benefit: accuracy, citing real numbers.
+\Probe RAG vs fine-tuning? Document chunking? RAG limitations?
+
+\Q{16. Models with different capabilities.}
+\Why Real-world model differences.
+\Ans Model-specific overrides in registry. Temperature requirements (Kimi K2.5 needs $\geq$1.0). \texttt{litellm.drop\_params = True} silently drops unsupported params. Agent works regardless of underlying model.
+\Probe No function calling support? Different response formats? Codex Responses API?
+
+\Q{17. Observability and tracing role.}
+\Why Production AI monitoring.
+\Ans Log full LLM request/response when verbose (tools called, tokens, reasoning chain). Tracing captures timeline: prompt $\rightarrow$ decision $\rightarrow$ tool $\rightarrow$ result $\rightarrow$ answer. Essential for debugging agentic systems.
+\Probe Observability tools? Span vs trace? Production vs development observability?
+
+\Q{Q18. AI safety in financial context.}
+\Why Finance is high-stakes.
+\Ans (1) Fetch real data via function calls. (2) Lower temperature for consistency. (3) System prompt: express uncertainty, no investment recommendations. (4) Track tokens, iteration limits. (5) Log everything for audit trail. Useful but honest about limitations.
+\Probe Preventing financial advice? Harmful output? Confidently wrong output?
+
+\Q{Q19. Model distillation.}
+\Why Cost reduction strategies.
+\Ans Train smaller model on larger model's outputs. Smaller model mimics quality at fraction of cost. E.g., R1-Distill-Qwen-7B captures reasoning at lower cost. Use for routine tasks (formatting). 80\% quality at 20\% price.
+\Probe Distillation limitations? Safe task delegation? Relationship to fine-tuning?
+
+\Q{Q20. Testing and evaluating prompts.}
+\Why Systematic prompt evaluation.
+\Ans Test set with expected behaviors (tool calls, reasoning patterns). Check: right tools called? Sound reasoning? Accurate numbers? Correct format? A/B testing when changing prompts. Evals catch regressions.
+\Probe Non-deterministic outputs? Evals vs unit tests? Subjective quality evaluation?
+
+% ============================================================
+\newpage
+\section{Part 4: Bonus Technical Questions}
+% ============================================================
+
+\textcolor{purple}{\textbf{Glossary:}} \textit{Docker (containerization), WebSocket (persistent two-way connection), CORS (browser security), Async (non-blocking), Cron (scheduler), IMAP/SMTP (email protocols)}
+
+\Q{Dockerfile: Why install dependencies twice?}
+\Why Docker layer caching optimization.
+\Ans Copy \texttt{pyproject.toml} first, install dependencies (cached layer). Then copy source code. Code-only changes skip dependency install---rebuild in seconds vs minutes.
+
+\Q{Container runs Python and Node.js---how manage two runtimes?}
+\Why Multi-runtime pragmatism.
+\Ans WhatsApp bridge needs Baileys (JavaScript-only library). Node.js 20 installed alongside Python. Both processes in same container, communicate via localhost WebSocket. Best tool for each job.
+
+\Q{\texttt{ENTRYPOINT} vs \texttt{CMD}?}
+\Why Basic Docker knowledge.
+\Ans \texttt{ENTRYPOINT}: main executable (\texttt{openclaw-finance}). \texttt{CMD}: default arguments (\texttt{status}). Override CMD with different args; entrypoint stays.
+
+\Q{WhatsApp bridge: WebSocket instead of HTTP?}
+\Why When to use WebSocket.
+\Ans Constant two-way communication needed. Node.js receives WhatsApp messages anytime, must push to Python immediately. HTTP polling would be wasteful. WebSocket keeps persistent connection---either side sends instantly.
+
+\Q{WebSocket handshake?}
+\Why Foundational networking.
+\Ans Starts as HTTP with \texttt{Upgrade: websocket} header. Server responds \texttt{101 Switching Protocols}. TCP stays open; both sides send frames (text, binary, ping/pong).
+
+\Q{Slack Socket Mode vs HTTP webhooks?}
+\Why Deployment constraints.
+\Ans Socket Mode: Slack connects via WebSocket, no public IP/webhook URL needed. Great for dev/internal/firewalled. HTTP webhooks: requires public domain, SSL, open ports. Socket Mode initiates outbound connection.
+
+\Q{No CORS handling---why?}
+\Why Trick question on CORS purpose.
+\Ans CORS only applies to browser cross-origin requests. Project uses platform SDKs, not browser API calls. Would need CORS if adding web dashboard/REST API.
+
+\Q{Channel-level \texttt{allowFrom} access control.}
+\Why Application security model.
+\Ans Each channel has allowlist in config. \texttt{is\_allowed(sender\_id)} checked before processing. Empty list = open access. Telegram uses \texttt{user\_id|username} compound format. Blocked messages: warning log, no response (silent denial).
+
+\Q{Email channel requires \texttt{consent\_granted=true}.}
+\Why Ethical design, privacy.
+\Ans Email is invasive---bot reads/sends on user's behalf. Consent flag forces explicit opt-in. Ethical safeguard assuming conscious human decision.
+
+\Q{Security risks of \texttt{config.json} private keys?}
+\Why Identifying own security weaknesses.
+\Ans Plain strings in JSON---filesystem compromise exposes all secrets. No encryption at rest, no secrets manager, permissions not restricted. Acceptable for personal tool; production needs HashiCorp Vault or encrypted config with 600 permissions.
+
+\Q{9 channels use same agent---how?}
+\Why Abstraction patterns.
+\Ans Adapter Pattern: all channels inherit \texttt{BaseChannel}, implement \texttt{start()/stop()/send()}. Translate platform messages to generic \texttt{InboundMessage}. Agent only sees \texttt{InboundMessage}---doesn't know source platform.
+
+\Q{One channel crashes---what happens?}
+\Why Fault isolation.
+\Ans Each channel is independent \texttt{asyncio.create\_task()}. Discord crash doesn't affect Telegram/Slack. \texttt{ChannelManager} launches via \texttt{asyncio.gather()}. Crash logs error, tries reconnect; others keep running.
+
+\Q{Long polling vs WebSocket for messages?}
+\Why Protocol understanding.
+\Ans Long polling: HTTP request held open until message/timeout, then new request. Simulates real-time but full HTTP roundtrip per message (Telegram). WebSocket: permanent connection, instant frames either side (Discord/Slack). Long polling simpler, works through proxies.
+
+\Q{Message deduplication across channels?}
+\Why Distributed reliability.
+\Ans Local sets of processed message IDs. Feishu: \texttt{OrderedDict} (1000 cap). QQ: \texttt{deque} (1000 cap). Email: set (100K cap). Check ID before processing; skip duplicates. Cap prevents unbounded memory growth.
+
+\Q{WhatsApp bridge: separate Node.js process?}
+\Why Pragmatic architecture.
+\Ans Baileys (best WhatsApp library) is JavaScript-only. Reimplementing in Python would take months. Bridge pattern: Node.js handles protocol, Python handles business logic. JSON-over-WebSocket on localhost.
+
+\Q{Securing WebSocket between Python and Node.js?}
+\Why Defense-in-depth.
+\Ans (1) Bind to \texttt{127.0.0.1} only. (2) Optional \texttt{BRIDGE\_TOKEN}---5-second auth window. (3) WhatsApp credentials stored locally in \texttt{\textasciitilde/.openclaw-finance/whatsapp-auth/}.
+
+\Q{Cron service avoids busy-waiting?}
+\Why Efficient timers.
+\Ans Compute earliest \texttt{next\_run\_at\_ms} across jobs, \texttt{asyncio.sleep()} exactly until timestamp. Timer fires, executes due jobs, recomputes, re-arms. Event-driven, no CPU waste.
+
+\Q{Cron job fails?}
+\Why Error handling in scheduled systems.
+\Ans Records failure status, no retry, moves to next scheduled run. One-shot jobs deleted/disabled. No dead letter queue. Production: configurable retry with exponential backoff.
+
+\Q{Test channel integration without real platform?}
+\Why External integration testing.
+\Ans Mock platform SDK. Create fake \texttt{Message} objects, pass to channel handler, assert correct \texttt{InboundMessage} published to bus. Test \texttt{is\_allowed()} separately with various sender IDs.
+
+\Q{Test MessageBus in isolation?}
+\Why Component testing.
+\Ans Create test bus, publish \texttt{InboundMessage}, mock agent consumes. Publish \texttt{OutboundMessage}, mock channel consumes. Verify ordering, backpressure handling, clean shutdown. Test concurrent publish/consume for race conditions.
+
+\Q{Test pyramid for this project?}
+\Why Testing philosophy.
+\Ans Unit (base): \texttt{is\_allowed()}, \texttt{\_validate\_url()}, cron parsing, config. Integration (middle): channel $\rightarrow$ bus $\rightarrow$ agent with mocks. E2E (top): full Docker compose startup. Most effort on unit tests (fast, isolated).
+
+\Q{User spamming bot with messages?}
+\Why Rate limiting, backpressure.
+\Ans Currently no inbound rate limiting. All messages trigger LLM calls. Production: token bucket rate limiter per user at channel layer. External APIs already have rate limits (1-second delays).
+
+\Q{Performance bottlenecks end-to-end?}
+\Why Performance analysis.
+\Ans Biggest: LLM API call (1-5 seconds). Then tool execution. Network to chat platforms: <100ms. Bus operations: microsecond-level. Optimization targets: LLM response caching, tool call batching, streaming responses.
+
+\Q{Docker layer caching improves build performance?}
+\Why Docker optimization.
+\Ans Each instruction creates cached layer. Copy \texttt{pyproject.toml} + install = cached dependency layer. Code-only changes skip dependency reinstall. Minutes $\rightarrow$ seconds.
+
+\Q{\texttt{asyncio.create\_task()} vs \texttt{await}?}
+\Why Fundamental async Python.
+\Ans \texttt{await}: runs coroutine, waits for finish. \texttt{create\_task()}: schedules concurrent execution, returns Task immediately. \texttt{ChannelManager.start\_all()}: \texttt{create\_task()} per channel for concurrency, then \texttt{gather()} to wait all.
+
+\Q{\texttt{asyncio.run\_coroutine\_threadsafe()} in Feishu?}
+\Why Thread-to-async bridging.
+\Ans Feishu SDK runs in separate thread. Can't call async functions directly. \texttt{run\_coroutine\_threadsafe()} submits coroutine to main thread's event loop from Feishu thread. Returns \texttt{concurrent.futures.Future}.
+
+\Q{Running blocking code in async context?}
+\Why Event loop constraints.
+\Ans Blocking function (e.g., \texttt{time.sleep()}) blocks entire event loop. Fix: \texttt{asyncio.to\_thread()} runs in thread pool executor, freeing loop. Alternative: \texttt{loop.run\_in\_executor()}.
+
+\Q{WhatsApp bridge crashes---Python side?}
+\Why Fault tolerance.
+\Ans Python detects WebSocket disconnection, starts reconnect loop (5-second delay). Node.js under PM2/systemd restarts automatically. Bridge stateless for routing; credentials persisted for reconnection without new QR scan.
+
+\Q{Channel handles platform API rate limiting?}
+\Why API resilience.
+\Ans Platform-specific: Discord 429 + \texttt{Retry-After} header. Telegram: library handles retries. Slack: SDK manages headers. DingTalk: reconnect on error. Each channel implements own retry logic.
+
+\Q{Config file missing or corrupted?}
+\Why Graceful degradation.
+\Ans Catches JSON parsing/Pydantic validation exceptions, falls back to \texttt{Config()} defaults. App starts with sensible defaults (no channels, no keys). Logs warning, doesn't crash. User fixes config and restarts.
+
+\Q{Exceptions in \texttt{asyncio.gather()} with multiple channels?}
+\Why Async error propagation.
+\Ans Without \texttt{return\_exceptions=True}: first exception kills all tasks. With it: exceptions returned as values. Iterate results, log exceptions, others keep running. Per-channel try/except inside tasks for isolation.
+
+\Q{Platform API temporarily unavailable?}
+\Why Resilience patterns.
+\Ans Auto-reconnect with delays (5 seconds). Logs error, waits, retries. Doesn't crash or affect other channels. Outbound dispatcher handles send failures---logs and moves to next message. Production: retry with exponential backoff, dead letter queue.
+
+\Q{Testing async code in Python?}
+\Why Async testing complexity.
+\Ans \texttt{pytest-asyncio} with \texttt{async def} tests and \texttt{@pytest.mark.asyncio}. Mock LLM provider for predictable responses. \texttt{asyncio.wait\_for()} with timeouts prevents hanging. Test error cases (tool failure mid-loop).
+
+\Q{CI/CD pipeline setup?}
+\Why Production readiness.
+\Ans GitHub Actions: lint (\texttt{ruff check}), test (\texttt{pytest} with performance guard), deploy (Docker build $\rightarrow$ registry). Frontend: \texttt{tsc} type check, \texttt{vite build}. Config schema validation. Pipeline stops on failure.
+
+% ============================================================
+\newpage
+\section{Part 5: HR/Behavioral Questions}
+% ============================================================
+
+\textcolor{purple}{\textbf{Glossary:}} \textit{STAR (Situation/Task/Action/Result), Custodian Bank (holds assets for institutions---BNY holds trillions), Full Stack (frontend + backend)}
+
+\Q{1. Why BNY Mellon?}
+\Why Genuine interest, company research.
+\Ans \textbf{S}: Building OpenClaw-Finance, connected to real financial data. \textbf{T}: Drew to BNY's modernization---cloud migration, AI/ML fraud detection, API-first. \textbf{A}: Researched BNY's cloud-first strategy, NLP for document processing. \textbf{R}: Excited about real financial infrastructure at scale, learning from trillion-dollar teams.
+
+\Q{2. Tell me about yourself.}
+\Why Elevator pitch, background narrative.
+\Ans \textbf{S}: Software engineer at intersection of AI and finance. \textbf{T}: Wanted to solve real problem, not just CRUD. \textbf{A}: Built OpenClaw-Finance solo---10+ data sources, 9 channels, 14+ LLM providers, agentic tool loop. \textbf{R}: Learned production systems, real-time data, AI that reasons. Looking for greater scale at BNY.
+
+\Q{3. Strengths and weaknesses.}
+\Why Self-awareness, honesty.
+\Ans \textbf{Strength}: Independent learning---built complete system with no prior experience in 10+ APIs or agentic loops. Broke problem into pieces, iterated until working. \textbf{Weakness}: Getting too deep in technical details. Learned to set 30-minute debugging limits, step back to reassess.
+
+\Q{4. Where in 5 years?}
+\Why Career ambitions alignment.
+\Ans \textbf{S}: Focused on full-stack + AI/ML fundamentals. \textbf{T}: Technical leader bridging engineering and business strategy. \textbf{A}: Deepen expertise in fraud detection, risk analytics, real-time portfolio management. \textbf{R}: Lead impactful financial tech teams. BNY internship is foundation.
+
+\Q{5. Challenge building OpenClaw-Finance.}
+\Why Problem-solving process.
+\Ans \textbf{S}: Designing agentic tool loop for autonomous financial reasoning. \textbf{T}: Multi-tool sequencing, self-evaluation, error handling within token limits. \textbf{A}: State machine tracking 20 iterations. Cache with TTL for API optimization. \textbf{R}: Handles complex queries like ``Compare AAPL vs Chinese tech peers using macro indicators''---5-6 tool calls, cross-source reasoning.
+
+\Q{6. How do you handle failure?}
+\Why Ownership, learning from mistakes.
+\Ans \textbf{S}: Rushed meme coin launch feature without proper testing. \textbf{T}: Deploy tokens on pump.fun/four.meme. \textbf{A}: Hit wrong key format, incorrect RPC endpoints, IPFS failures. Embarrassing because avoidable. \textbf{R}: Spent 3 days debugging instead of 1. Lesson: shortcuts cost more in systems handling real money. Now: validation + error handling before testing, \texttt{check\_env} verification step.
+
+\Q{7. Ethics and integrity.}
+\Why Critical for regulated banks.
+\Ans \textbf{S}: Meme coin social media scanning could manipulate markets/promote scams. \textbf{T}: Decide: include as-is or add safeguards. \textbf{A}: Multi-layer protection: confirm details before signing, no private key sharing, irreversible cost warnings, documented risks. \textbf{R}: Feature works with safety gates. \textbf{Principle}: Protecting users > feature completeness.
+
+\Q{8. Why this project? Motivation?}
+\Why Passion, initiative.
+\Ans \textbf{S}: Most AI financial tools only covered US equities or expensive platforms. Wanted complete global view. \textbf{T}: Build AI agent connecting all data sources with natural language. \textbf{A}: Started Yahoo Finance, added FRED, AKShare, prediction markets. Multi-channel for Telegram/Discord/CLI. \textbf{R}: 10+ sources, 9 channels, autonomous analysis. \textbf{Motivation}: Genuinely curious about tech making financial analysis accessible.
+
+\Q{9. Teamwork (solo project).}
+\Why Collaboration skills.
+\Ans \textbf{S}: Solo project, but actively sought feedback. \textbf{T}: Understand real user interaction, what features matter. \textbf{A}: Discord channel for testers, documentation for contributors, incorporated feedback on API design/error messages. Redesigned Chinese market data output based on user input. Contributed upstream bug fixes. \textbf{R}: Feedback shaped evolution---prediction market integration, meme safeguards from suggestions.
+
+\Q{10. Learning new technologies.}
+\Why Adaptability, learning process.
+\Ans \textbf{S}: No LLM orchestration/agentic experience. \textbf{T}: Learn LLM APIs, tool interfaces, reasoning loop. \textbf{A}: Read Anthropic/OpenAI docs, built prototypes, studied ReAct patterns, experimented (some failed, each taught something). \textbf{R}: Working agent loop in weeks, extended to 14+ providers via LiteLLM. \textbf{Approach}: Build by doing---documentation $\rightarrow$ minimal prototype $\rightarrow$ iterate on failures.
+
+\Q{11. Conflicting priorities.}
+\Why Prioritization, communication.
+\Ans \textbf{S}: Meme scanning feature (new) vs prediction market bug (existing users getting wrong data). \textbf{T}: Decide what first. \textbf{A}: Wrote dependencies---scanning standalone, prediction bug data correctness issue. Fixed bug first, communicated delay. \textbf{R}: Bug fixed in 1 day, scanning shipped 2 days later. Lesson: correctness beats features.
+
+% ============================================================
+\newpage
+\section{Part 6: System Design Questions}
+% ============================================================
+
+\textcolor{purple}{\textbf{Glossary:}} \textit{Load Balancer (traffic distribution), Redis (in-memory cache), JWT (auth token), CI/CD (automated pipeline), Kubernetes (container orchestration), API Gateway (request routing)}
+
+\Q{Q1: Scaling to 10,000 users.}
+\Why Horizontal scaling, stateless vs stateful.
+\Ans (1) Stateless agent loop---sessions to PostgreSQL/Redis. (2) Load balancer (Nginx/AWS ALB) in front of gateway instances. (3) Redis-backed message bus. (4) Worker pool (Celery) for LLM calls---separate routing from reasoning. Tradeoff: infrastructure complexity, but independent scaling per component.
+
+\Q{Q2: Real-time collaborative features.}
+\Why WebSockets, pub/sub, state sync.
+\Ans WebSocket + Redis Pub/Sub. Users subscribe to workspace channel. Messages published to Redis, all connected clients receive. Agent responses routed same way. State: Redis Streams or append-only table for replay on late join. Tradeoff: latency vs consistency.
+
+\Q{Q3: Rate limiting.}
+\Why Algorithms, placement strategies.
+\Ans Token bucket: 10 tokens/refill 1/min per user. Place at gateway (before agent loop). Redis with \texttt{DECRBY} + TTL for distributed. Per-channel limits. Global LLM budget cap. Tradeoff: strict limits vs power user frustration.
+
+\Q{Q4: Database design.}
+\Why Data modeling, access patterns.
+\Ans Hybrid: PostgreSQL (structured) + Redis (caching/real-time). Tables: \texttt{users}, \texttt{sessions} (composite key: user\_id + channel), \texttt{messages} (FK to session, indexed on session\_id + timestamp), \texttt{financial\_cache} (JSONB). Normalize users, denormalize financial cache.
+
+\Q{Q5: Authentication \& Authorization.}
+\Why Security non-negotiable in fintech.
+\Ans JWT for HTTP gateway. Platform-native identity for channels. RBAC: user/premium/admin roles. Agent checks role before expensive tools. Never store secrets in session files. Log every authenticated request for audit trails.
+
+\Q{Q6: Failover \& High Availability.}
+\Why Redundancy, graceful degradation.
+\Ans (1) Gateway: multiple instances + load balancer + health checks. (2) Agent: stateless, idempotent with dedup keys. (3) Data: PostgreSQL read replicas + Redis Sentinel. Circuit breaker for LLM failures. Queue messages during outages.
+
+\Q{Q7: Monitoring \& Observability.}
+\Why Three pillars: logs, metrics, traces.
+\Ans Structured JSON logs (timestamp, level, service, user\_id, trace\_id). Prometheus metrics (messages/channel, LLM latency, error rates). OpenTelemetry distributed tracing. Grafana dashboards. Alerts: >5\% error rate, >10s LLM latency.
+
+\Q{Q8: Caching layer design.}
+\Why Cache strategies, invalidation.
+\Ans Two-tier: Redis (hot, 5min-1hr TTL) + PostgreSQL (warm, 24hr-7day TTL). Cache-aside pattern. Event-driven invalidation via Redis Pub/Sub. Never cache real-time prices. Metadata for freshness indicators.
+
+\Q{Q9: Real-time updates \& streaming.}
+\Why Modern chat UX.
+\Ans Server-Sent Events for HTTP, WebSocket for real-time channels. Yield tokens as LLM generates. Telegram/Discord: typing indicator + full response (or message editing if supported). Tradeoff: perceived latency reduction vs connection management complexity.
+
+\Q{Q10: Production deployment on AWS/GCP.}
+\Why Containerization, orchestration, CI/CD.
+\Ans Multi-stage Dockerfile. Kubernetes: gateway + worker + Redis deployments. Horizontal pod autoscaling. GitHub Actions: test $\rightarrow$ build $\rightarrow$ push ECR $\rightarrow$ rolling deployment. Canary: 10\% traffic first. RDS, ElastiCache, ALB. Secrets in AWS Secrets Manager.
+
+\Q{Q11: API Gateway design.}
+\Why Request routing, middleware.
+\Ans Single entry point: auth $\rightarrow$ rate limit $\rightarrow$ log $\rightarrow$ route. Path-based routing (\texttt{/api/telegram/webhook}, \texttt{/api/chat}). Protocol translation to \texttt{InboundMessage}. Stateless, dumb---routes, validates, rate-limits, never processes business logic.
+
+\Q{Q12: Data consistency across channels.}
+\Why Distributed state, user identity.
+\Ans Canonical \texttt{user\_id} mapping telegram\_id/discord\_id/slack\_id. Session keyed by \texttt{user\_id} (not channel:chat\_id). Same session across channels. Conflict resolution: sequential by timestamp, optimistic locking.
+
+% ============================================================
+\newpage
+\section{Part 7: Gotcha \& Edge Case Questions}
+% ============================================================
+
+\textcolor{purple}{\textbf{Glossary:}} \textit{Concurrency (simultaneous events), Race Condition (timing-dependent bug), Failover (automatic backup switch), Prompt Injection (AI attack), Single Point of Failure, Graceful Degradation (partial functionality during failure)}
+
+\Q{Q1: Two users send messages simultaneously on Telegram?}
+\Why Concurrency bottleneck.
+\Ans Agent loop processes sequentially from single inbound queue. User B waits for User A's full loop (up to 20 iterations). Sessions separate per \texttt{channel:chat\_id}---no data collision. But no true parallelism. Production: worker pool with \texttt{asyncio.Semaphore} or Celery.
+
+\Q{Q2: LLM API completely down?}
+\Why Graceful degradation.
+\Ans LiteLLM retries 3x with backoff (5s, 10s, 20s). If all fail, error response fed to LLM which tries to continue (limitation---no circuit breaker). Better: detect consecutive failures, stop trying, send ``AI service unavailable'' message.
+
+\Q{Q3: Yahoo Finance returns null P/E?}
+\Why Data quality handling.
+\Ans Structured error response (\texttt{\{pe\_ratio: None, error: 'Data unavailable'\}}). Inner LLM decides: retry different metrics, try alternative source, or tell user data unavailable. Graceful degradation---one bad field doesn't kill analysis.
+
+\Q{Q4: API rate limits across 10+ sources?}
+\Why Multi-source coordination.
+\Ans Per-tool rate limiting via sliding window. Each tool independently manages limits. Missing: global rate limiter coordinating across tools. No per-user inbound rate limiting. Caching reduces API calls.
+
+\Q{Q5: Malicious prompt for unauthorized token deployment?}
+\Why Security, prompt injection.
+\Ans Multi-layer defense: (1) Three-stage pipeline (scan/read-only, confirm/approval, deploy/check\_env). (2) LLM must explicitly call deployment tool. (3) Tool description says ``confirm with user.'' (4) \texttt{allow\_from} limits who talks to bot. Limitation: prompt-level guardrails, not cryptographic. No hardware wallet integration, no transaction caps.
+
+\Q{Q6: WhatsApp Node.js bridge crashes?}
+\Why Cross-process failure.
+\Ans Python detects WebSocket disconnect, reconnects every 5 seconds. Node.js under PM2/systemd restarts. Messages during downtime lost (no queue between processes). Other channels unaffected. Credentials persisted---no new QR scan needed.
+
+\Q{Q7: Agent loop hits 20-iteration max?}
+\Why Iteration limit edge case.
+\Ans Forces final response: ``You've reached max iterations. Provide summary now.'' LLM gives best answer with gathered info. Safety valve preventing infinite loops. Downside: incomplete response for complex queries. Currently hardcoded---should be configurable per query type.
+
+\Q{Q8: Two people edit \texttt{config.json} simultaneously?}
+\Why File-based concurrency.
+\Ans Config loaded once at startup into Pydantic model. No hot-reload---restart required. Risk lower than it seems. But if two edited then restarted: last write wins, no merge strategy. \texttt{\_save\_store()} writes atomically but config loader doesn't. Production: database or atomic \texttt{os.replace()}.
+
+\Q{Q9: Cron job takes 10 minutes but scheduled every 5?}
+\Why Job overlap.
+\Ans No locking mechanism. Same job could start second instance while first running. No ``skip if already running'' flag. Production: \texttt{asyncio.Lock} per job or running flag. Jobs typically fast in personal tool, but long-running tasks need protection.
+
+\Q{Q10: Feishu SDK runs in separate thread---communication?}
+\Why Thread-to-async bridging.
+\Ans Feishu SDK runs WebSocket in background thread. Uses \texttt{asyncio.run\_coroutine\_threadsafe()} to bridge from thread to main event loop. Risk: if event loop blocked, coroutine queues up (delayed, not lost). Dedup via \texttt{OrderedDict} (1000 cap).
+
+\Q{Q11: LLM sends null values for required tool parameters?}
+\Why LLM structured output reliability.
+\Ans \texttt{validate\_params()} checks against JSON Schema. Handles nulls for optional fields (LLMs love sending nulls). Required fields: validation fails, error returned to LLM, can retry. Doesn't catch semantic validation (valid-looking but nonsensical ticker).
+
+\Q{Q12: Single biggest security risk?}
+\Why Prioritization, honesty.
+\Ans Private keys in plaintext \texttt{config.json}. Solana/BSC keys, email passwords, API keys as plain strings. File permissions not restricted. Second: no inbound rate limiting (expensive LLM calls). Third: shell command denylist (bypassable). Fix: OS keychain, encrypted config, or HashiCorp Vault.
+
+\Q{Q13: Building for BNY Mellon production?}
+\Why Enterprise vs personal project distinction.
+\Ans (1) PostgreSQL instead of JSONL. (2) Gateway authentication. (3) Structured audit logging. (4) Task queue (Celery/RQ). (5) Input sanitization + output filtering. Architecture solid (message bus, channel abstraction, provider registry). Needs hardening.
+
+\Q{Q14: Memory consolidation summarizes incorrectly?}
+\Why LLM-generated summary reliability.
+\Ans Real risk: LLM misinterprets conversation (e.g., ``bullish on Tesla'' when hypothetical). Wrong fact persists in MEMORY.md, influences future responses. HISTORY.md is append-only (debuggable). MEMORY.md is living document (no version history). Production: confidence scoring, review mechanism, vector store retrieval.
+
+\Q{Q15: 5-minute architecture explanation to senior engineer?}
+\Why Communication distillation.
+\Ans ``Multi-channel AI agent, four layers. Channels (9 platforms) publish to Message Bus (async queue). Agent Loop picks up, detects intent, builds context, runs LLM with up to 20 tool iterations. Tools: financial APIs, web search, shell. Sessions: per-user JSONL with memory consolidation. Provider layer: 14+ LLMs via LiteLLM registry. Tradeoffs: single-process bottleneck, file persistence, no streaming, sequential tools.''
+
+% ============================================================
+\newpage
+\section{Cheat Sheet: Key Numbers \& Facts}
+% ============================================================
+
+\begin{multicols}{2}
+\textbf{Architecture Numbers}
+\begin{itemize}[nosep,leftmargin=*]
+\item 9 chat channels
+\item 14+ LLM providers
+\item 10+ financial data sources
+\item 20 max agent loop iterations
+\item 50 messages $\rightarrow$ consolidation
+\item 25 messages kept after consolidation
+\item 10 equity valuation models
+\end{itemize}
+
+\textbf{Caching TTLs}
+\begin{itemize}[nosep,leftmargin=*]
+\item Price: 0s (never cached)
+\item Prediction odds: 5 min
+\item Market search: 1 day
+\item Financial analysis: 7 days
+\item Earnings: 30 days
+\item AKShare spot: 10 min
+\end{itemize}
+
+\textbf{Rate Limits}
+\begin{itemize}[nosep,leftmargin=*]
+\item AKShare: 1 req/sec
+\item DexScreener: 300/min
+\item CoinGecko: 30/min (free)
+\item Polymarket: 300/min
+\item Kalshi: 300/min
+\end{itemize}
+
+\textbf{Key Patterns}
+\begin{itemize}[nosep,leftmargin=*]
+\item Producer-Consumer (Bus)
+\item Plugin (Tool Registry)
+\item Observer (Outbound)
+\item ReAct (Agent Loop)
+\item Adapter (Channels)
+\end{itemize}
+
+\textbf{DCF Model}
+\begin{itemize}[nosep,leftmargin=*]
+\item Risk-free: 10yr Treasury
+\item Equity premium: 5.5\%
+\item Terminal growth: 2.5\%
+\item BUY: >15\% above price
+\item SELL: >15\% below price
+\end{itemize}
+
+\textbf{Meme Scoring}
+\begin{itemize}[nosep,leftmargin=*]
+\item Current events: 8-10
+\item Animal themes: 6-9
+\item Internet slang: 5-8
+\item Generic crypto: 1-3
+\item Min threshold: 3
+\end{itemize}
+
+\textbf{Key Technologies}
+\begin{itemize}[nosep,leftmargin=*]
+\item Python (asyncio)
+\item LiteLLM gateway
+\item Node.js + Baileys (WA)
+\item JSONL sessions
+\item Pydantic config
+\item croniter scheduling
+\end{itemize}
+
+\textbf{Security}
+\begin{itemize}[nosep,leftmargin=*]
+\item Keys in config.json
+\item Email consent flag
+\item Channel allowlists
+\item Human-in-loop deploy
+\item Shell denylist
+\end{itemize}
+\end{multicols}
+
+% ============================================================
+\section{Architecture Summary}
+% ============================================================
+
+\textbf{Four-Layer Architecture:}
+\begin{enumerate}[nosep,leftmargin=*]
+\item \textbf{Channel Layer:} 9 platforms implement \texttt{BaseChannel}
+\item \textbf{Message Bus:} Async producer-consumer queues
+\item \textbf{Agent Loop:} LLM reasoning with 20 max tool iterations
+\item \textbf{Tool Registry:} Plugin system for 10+ data sources
+\end{enumerate}
+
+\textbf{Data Flow:} User $\rightarrow$ Channel $\rightarrow$ InboundMessage $\rightarrow$ Bus $\rightarrow$ Agent Loop $\rightarrow$ LLM (tool calls) $\rightarrow$ OutboundMessage $\rightarrow$ Bus $\rightarrow$ Channel $\rightarrow$ User
+
+\vfill
+\begin{center}
+\rule{0.5\textwidth}{0.5pt}\\[0.5cm]
+{\large\textcolor{primaryblue}{\textbf{Good Luck with Your Interview!}}}\\[0.3cm]
+{\small\textcolor{darkgray}{OpenClaw-Finance Interview Prep $\cdot$ August 2026}}
+\end{center}
+
+\end{document}
