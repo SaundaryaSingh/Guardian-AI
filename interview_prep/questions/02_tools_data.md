@@ -240,7 +240,7 @@ Polymarket splits its data across two APIs for a reason. The Gamma API handles m
 **Why interviewers ask this**: Tests scaling thinking and bottleneck identification.
 
 **Answer script**:
-Three areas. First, the cache: disk-based caching works for a single instance but wouldn't share state across servers — I'd move to Redis. Second, the LLM calls: the inner LLM is the bottleneck since each query requires two LLM calls. I'd pre-compute common analyses or use a smaller fine-tuned model. Third, rate limits: with 10x users, API rate limits become the binding constraint. I'd add a request queue with priority levels and consider **WebSocket** subscriptions for live data instead of polling.
+Three areas. First, the cache: disk-based caching works for a single instance but wouldn't share state across servers — I'd move to Redis. Second, the LLM calls: the inner LLM is the bottleneck since each query requires two LLM calls. I'd pre-compute common analyses or use a smaller fine-tuned model. Third, rate limits: with 10x users, API rate limits become the binding constraint. I'd add a request queue with priority levels and consider **WebSocket** (a two-way communication channel that stays open — like a phone call vs sending a letter) subscriptions for live data instead of polling.
 
 **Follow-up probes**:
 - How would you shard the cache across instances?

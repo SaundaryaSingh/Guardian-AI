@@ -21,6 +21,7 @@
 | **Context Window** | How much text the AI can "see" at once — like a whiteboard that can only fit so much |
 | **Cache** | Storing frequently used data nearby for quick access — like keeping frequently used tools on your desk instead of walking to the supply room |
 | **Middleware** | Code that runs between two other pieces of code — like a filter that processes data before the main system sees it |
+| **Subagent** | A background worker spawned by the main agent to handle long-running tasks — like delegating research to an assistant |
 
 ---
 
@@ -306,7 +307,7 @@ When the agent fetches financial data, the result gets saved with metadata — t
 **Why interviewers ask this:** Subagents show you understand task decomposition and parallelism.
 
 **Answer script:**
-Subagents are background workers spawned by the main agent to handle long-running tasks. If a user asks for a deep analysis of 10 stocks, the main agent can spawn a subagent to do the research in the background while it continues handling other users. The subagent runs its own tool calls and returns results when done. The tradeoff is added complexity around result delivery — you need to track when the subagent finishes and deliver results back to the right user.
+**Subagents** (background workers spawned by the main agent to handle long-running tasks — like delegating research to an assistant) parallelize heavy work. If a user asks for a deep analysis of 10 stocks, the main agent can spawn a subagent to do the research in the background while it continues handling other users. The subagent runs its own tool calls and returns results when done. The tradeoff is added complexity around result delivery — you need to track when the subagent finishes and deliver results back to the right user.
 
 **Follow-up probes:**
 - How do you handle subagent failures?

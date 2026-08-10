@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.6.14)  10 AUG 2026 11:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.6.14)  10 AUG 2026 13:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -568,6 +568,12 @@ LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
 (/usr/share/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
+Overfull \hbox (26.0115pt too wide) in paragraph at lines 159--159
+ [][] [][][]\T1/lmr/m/n/10.95 Q10: Ex-plain the async ar-chi-tec-ture. Why wrap
+ syn-chronous li-braries in \T1/lmtt/m/n/10.95 asyncio.to_thread()\T1/lmr/m/n/1
+0.95 ?[][] [][]  
+ []
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -580,7 +586,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.196 ...ich provider to use.}{12}{subsection.3.2}
+l.179 ...e concurrent users?}{16}{subsection.2.15}
                                                   % [1]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -589,11 +595,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[2])
-\tf@toc=\write4
-\openout4 = `interview_prep.toc'.
-
-
+[2]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -601,7 +603,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[3]
+[3])
+\tf@toc=\write4
+\openout4 = `interview_prep.toc'.
+
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -650,18 +656,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [9]
-Overfull \hbox (11.4492pt too wide) in paragraph at lines 229--230
-[]\T1/lmr/bx/n/10.95 Glossary:[] \T1/lmr/m/it/10.95 API (Ap-pli-ca-tion In-ter-
-face), TTL (Time To Live), OHLCV (Open/High/Low/Close/Volume),
- []
-
-
-Overfull \hbox (1.63031pt too wide) in paragraph at lines 238--239
-[] []\T1/lmr/bx/n/10.95 An-swer:[] \T1/lmr/m/n/10.95 Rule-based us-ing key-word
- match-ing. Ex-tracts tick-ers via regex (\T1/lmtt/m/n/10.95 $AAPL\T1/lmr/m/n/1
-0.95 , \T1/lmtt/m/n/10.95 600519.SH\T1/lmr/m/n/10.95 ), matches
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -670,9 +664,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [10]
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 276.
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -689,6 +680,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [12]
+Overfull \hbox (77.92181pt too wide) in paragraph at lines 229--230
+[]\T1/lmr/bx/n/10.95 Glossary:[] \T1/lmr/m/it/10.95 API (Ap-pli-ca-tion Pro-gra
+m-ming In-ter-face), TTL (Time To Live), OHLCV (Open/High/Low/Close/Volume),
+ []
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -705,6 +701,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [14]
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 278.
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -745,16 +744,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [19]
-Overfull \hbox (4.42847pt too wide) in paragraph at lines 500--501
-[] []\T1/lmr/bx/n/10.95 An-swer:[] \T1/lmr/m/n/10.95 Records fail-ure sta-tus, 
-no retry, moves to next sched-uled run. One-shot jobs deleted/disabled.
- []
-
-
-Overfull \hbox (2.85109pt too wide) in paragraph at lines 508--509
-[] []\T1/lmr/bx/n/10.95 An-swer:[] \T1/lmr/m/n/10.95 Cre-ate test bus, pub-lish
- \T1/lmtt/m/n/10.95 InboundMessage\T1/lmr/m/n/10.95 , mock agent con-sumes. Pub
--lish \T1/lmtt/m/n/10.95 OutboundMessage\T1/lmr/m/n/10.95 ,
+Overfull \hbox (6.17491pt too wide) in paragraph at lines 370--370
+|[]\T1/lmr/bx/n/12 11. What's the dif-fer-ence be-tween a gate-way provider and
+ a stan-dard provider?| 
  []
 
 
@@ -765,26 +757,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [20]
-Overfull \hbox (55.30392pt too wide) in paragraph at lines 532--533
-[] []\T1/lmr/bx/n/10.95 An-swer:[] \T1/lmr/m/n/10.95 Feishu SDK runs in sep-a-r
-ate thread. Can't call async func-tions di-rectly. \T1/lmtt/m/n/10.95 run_corou
-tine_threadsafe()
- []
-
-
-Overfull \hbox (10.23608pt too wide) in paragraph at lines 532--533
-\T1/lmr/m/n/10.95 sub-mits corou-tine to main thread's event loop from Feishu t
-hread. Re-turns \T1/lmtt/m/n/10.95 concurrent.futures.Future\T1/lmr/m/n/10.95 .
- 
- []
-
-
-Overfull \hbox (3.75919pt too wide) in paragraph at lines 536--537
-[] []\T1/lmr/bx/n/10.95 An-swer:[] \T1/lmr/m/n/10.95 Block-ing func-tion (e.g.,
- \T1/lmtt/m/n/10.95 time.sleep()\T1/lmr/m/n/10.95 ) blocks en-tire event loop. 
-Fix: \T1/lmtt/m/n/10.95 asyncio.to_thread()
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -801,12 +773,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [22]
-Overfull \hbox (52.9707pt too wide) in paragraph at lines 595--596
-[] []\T1/lmr/bx/n/10.95 An-swer:[] S\T1/lmr/m/n/10.95 : Rushed meme coin launch
- fea-ture with-out proper test-ing. \T1/lmr/bx/n/10.95 T\T1/lmr/m/n/10.95 : De-
-ploy to-kens on pump.fun/four.meme.
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -815,17 +781,15 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [23]
+Overfull \hbox (1.85577pt too wide) in paragraph at lines 425--426
+\T1/lmr/m/it/10.95 web pro-to-col), CORS (browser se-cu-rity), Async (non-block
+ing), Thread (par-al-lel ex-e-cu-tion), Cron (sched-
+ []
 
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[24]
-Overfull \hbox (8.9447pt too wide) in paragraph at lines 642--643
-[] []\T1/lmr/bx/n/10.95 An-swer:[] \T1/lmr/m/n/10.95 JWT for HTTP gate-way. Pla
-tform-native iden-tity for chan-nels. RBAC: user/premium/admin
+Overfull \hbox (4.29437pt too wide) in paragraph at lines 425--426
+\T1/lmr/m/it/10.95 uler), FIFO (First In First Out), HMAC (mes-sage ver-i-fi-ca
+-tion), GIL (Python thread lock), IMAP/SMTP
  []
 
 
@@ -835,12 +799,19 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
+[24]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
 [25]
-Overfull \hbox (37.82503pt too wide) in paragraph at lines 666--667
-[] []\T1/lmr/bx/n/10.95 An-swer:[] \T1/lmr/m/n/10.95 Sin-gle en-try point: auth
- $\OMS/lmsy/m/n/10.95 !$ \T1/lmr/m/n/10.95 rate limit $\OMS/lmsy/m/n/10.95 !$ \
-T1/lmr/m/n/10.95 log $\OMS/lmsy/m/n/10.95 !$ \T1/lmr/m/n/10.95 route. Path-base
-d rout-ing (\T1/lmtt/m/n/10.95 /api/telegram/webhook\T1/lmr/m/n/10.95 ,
+Overfull \hbox (2.99716pt too wide) in paragraph at lines 487--488
+[] []\T1/lmr/bx/n/10.95 An-swer:[] \T1/lmr/m/n/10.95 Ev-ery chan-nel in-her-its
+ from \T1/lmtt/m/n/10.95 BaseChannel \T1/lmr/m/n/10.95 and im-ple-ments the sam
+e three meth-ods: \T1/lmtt/m/n/10.95 start()\T1/lmr/m/n/10.95 ,
  []
 
 
@@ -851,15 +822,16 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [26]
-Overfull \hbox (40.57411pt too wide) in paragraph at lines 697--698
-[] []\T1/lmr/bx/n/10.95 An-swer:[] \T1/lmr/m/n/10.95 Multi-layer de-fense: (1) 
-Three-stage pipeline (scan/read-only, con-firm/approval, de-ploy/check_env).
+Overfull \hbox (58.7975pt too wide) in paragraph at lines 493--494
+[] [][]\T1/lmr/bx/n/10.95 Fol-low-up Probes:[][] \T1/lmr/m/n/10.95 How does \T1
+/lmtt/m/n/10.95 asyncio.gather() \T1/lmr/m/n/10.95 han-dle task fail-ures? Woul
+d you use \T1/lmtt/m/n/10.95 return_exceptions=True
  []
 
 
-Overfull \hbox (17.05301pt too wide) in paragraph at lines 701--702
-[] []\T1/lmr/bx/n/10.95 An-swer:[] \T1/lmr/m/n/10.95 Python de-tects Web-Socket
- dis-con-nect, re-con-nects ev-ery 5 sec-onds. Node.js un-der PM2/systemd
+Overfull \hbox (1.14433pt too wide) in paragraph at lines 507--507
+|[]\T1/lmr/bx/n/12 Q: Why is the What-sApp bridge a sep-a-rate Node.js pro-cess
+ in-stead of Python?| 
  []
 
 
@@ -870,19 +842,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [27]
-Overfull \hbox (18.14453pt too wide) in paragraph at lines 709--710
-\T1/lmtt/m/n/10.95 _save_store() \T1/lmr/m/n/10.95 writes atom-i-cally but con-
-fig loader doesn't. Pro-duc-tion: database or atomic \T1/lmtt/m/n/10.95 os.repl
-ace()\T1/lmr/m/n/10.95 . 
- []
-
-
-Overfull \hbox (30.12918pt too wide) in paragraph at lines 717--718
-[] []\T1/lmr/bx/n/10.95 An-swer:[] \T1/lmr/m/n/10.95 Feishu SDK runs Web-Socket
- in back-ground thread. Uses \T1/lmtt/m/n/10.95 asyncio.run_coroutine_threadsaf
-e()
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -899,8 +858,170 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [29]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 7
-46.
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[30]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[31]
+Overfull \hbox (52.91977pt too wide) in paragraph at lines 609--610
+\T1/lmr/m/n/10.95 kills all tasks. That's bad --- one chan-nel crash-ing should
+n't take down the oth-ers. With \T1/lmtt/m/n/10.95 return_exceptions=True\T1/lm
+r/m/n/10.95 ,
+ []
+
+
+Overfull \hbox (9.36984pt too wide) in paragraph at lines 614--615
+\T1/lmr/m/n/10.95 cess or af-fect other chan-nels. The out-bound dis-patcher al
+so han-dles send fail-ures --- if \T1/lmtt/m/n/10.95 channel.send(msg)
+ []
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[32]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[33]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[34]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[35]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[36]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[37]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[38]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[39]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[40]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[41]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[42]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[43]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[44]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[45]
+Overfull \hbox (80.65189pt too wide) in paragraph at lines 841--842
+\T1/lmr/m/n/10.95 and all ser-vice cre-den-tials are stored as plain strings. I
+f some-one gets read ac-cess to \T1/lmtt/m/n/10.95 ~/.openclaw-finance/config.j
+son\T1/lmr/m/n/10.95 ,
+ []
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[46]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[47]
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 8
+65.
  (/usr/share/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
@@ -911,23 +1032,23 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[30{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}] (./interview_prep.aux
+[48{/usr/share/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}] (./interview_prep.aux
 )
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `interview_prep.out' has not changed.
-(rerunfilecheck)             Checksum: 14F110658E80B78975BD155243444D23;39035.
+(rerunfilecheck)             Checksum: 670AF07F22E5F69131AFC32928969120;62174.
  ) 
 Here is how much of TeX's memory you used:
- 11575 strings out of 469515
- 178032 string characters out of 5470807
- 620732 words of memory out of 5000000
- 39889 multiletter control sequences out of 15000+600000
+ 11629 strings out of 469515
+ 178734 string characters out of 5470807
+ 622732 words of memory out of 5000000
+ 39907 multiletter control sequences out of 15000+600000
  685859 words of font info for 75 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 75i,12n,79p,507b,556s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,79p,1154b,556s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf-dis
 t/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/lm
 /lmr10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/share/t
@@ -935,10 +1056,10 @@ exmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf-dist/fonts/type1/pu
 blic/lm/lmri10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></us
 r/share/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf-dist/font
 s/type1/public/lm/lmtt10.pfb>
-Output written on interview_prep.pdf (31 pages, 340656 bytes).
+Output written on interview_prep.pdf (49 pages, 421700 bytes).
 PDF statistics:
- 980 PDF objects out of 1000 (max. 8388607)
- 918 compressed objects within 10 object streams
- 183 named destinations out of 1000 (max. 500000)
- 1185 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1171 PDF objects out of 1200 (max. 8388607)
+ 1090 compressed objects within 11 object streams
+ 219 named destinations out of 1000 (max. 500000)
+ 1329 words of extra memory for PDF output out of 10000 (max. 10000000)
 

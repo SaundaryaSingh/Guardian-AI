@@ -250,7 +250,7 @@ Three layers. First, the Node.js WebSocket server binds to `127.0.0.1` only — 
 
 **Follow-up probes:**
 - What is the risk if BRIDGE_TOKEN is not set?
-- How would you add HMAC verification?
+- How would you add HMAC (a way to verify that a message hasn't been tampered with) verification?
 - Why bind to localhost instead of 0.0.0.0?
 
 ---
@@ -441,7 +441,7 @@ If you call a blocking function like `time.sleep()` inside an async function, it
 **Follow-up probes:**
 - What is the default thread pool size in asyncio?
 - When should you use threading vs multiprocessing vs asyncio?
-- What is the GIL and how does it affect this?
+- What is the GIL (Global Interpreter Lock — Python's way of handling threads) and how does it affect this?
 
 ---
 
